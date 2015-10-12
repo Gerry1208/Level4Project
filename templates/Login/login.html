@@ -2,17 +2,28 @@
 <html>
 <head>
     <script>
-        
+        function validateForm(){
+            var x = document.forms["login"]["username"].value;
+            if(x == null || x == ""){
+                alert("Please fill out the username");
+                return false
+            }
+        }
     </script>
 </head>
 <body>
-<h1>Welcome to Flashcards</h1>
-<p>Login Page</p>
-<form>
-    Username:<input type="text" name="username">
-    Password:<input type="password" name="password">
-    <input type="submit" value="submit">
-
-</form>
+    <h1>Welcome to Flashcards</h1>
+    <p>Login Page</p>
+    <section class="loginform cf">
+        <form name =login action="index_submit" method="get">
+            <ul>
+                <li><label for="username">Username</label>
+                <input type="text" name="username" placeholder="Gerry1208" required></li>
+                <li><label for ="password">Password</label>
+                <input type="password" name="password" placeholder="password" required></li>
+                <input type="submit" value="Login">
+            </ul>
+        </form>
+    </section>
 </body>
 </html>
