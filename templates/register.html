@@ -1,23 +1,18 @@
-<!DOCTYPE html>
 
-{% load static %}
+{% extends 'base.html' %}
 
-<html>
-    <head>
-        <title>Flashcards</title>
-         <link rel = "stylesheet" href="{% static "css/base.css" %}">
-    </head>
+{% load staticfiles %}
 
-    <body>
-        <h1>Register with Flashcards</h1>
+{% block title %} Register an Account {% endblock %}
 
+{% block body_block %}
         {% if registered %}
         <strong>thank you for registering!</strong>
-        <a href="/Login">Return to the homepage.</a><br />
+        <a href="/names/index/">Return to the homepage.</a><br />
         {% else %}
-        <strong>register here!</strong><br />
+        <strong>Registration</strong><br />
 
-        <form id="user_form" method="post" action="/Login/register/"
+        <form id="user_form" method="post" action="/names/register/"
                 enctype="multipart/form-data">
 
             {% csrf_token %}
@@ -26,10 +21,10 @@
                  (<p>) element. This ensures each element appears on a new line,
                  making everything look neater. -->
             {{ user_form.as_p }}
+            {{ profile_form.as_p }}
 
             <!-- Provide a button to click to submit the form. -->
             <input type="submit" name="submit" value="Register" />
         </form>
         {% endif %}
-    </body>
-</html>
+{% endblock %}
