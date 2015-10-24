@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% load staticfiles %}
+
+{%  block title %} Create a card {% endblock %}
+
+{% block body_block %}
+    <div id="page">
+        <div id=dropzone">
+        <form action="/names/create/" class="dropzone needsclick dz-clickable" id="Drag and Drop pictures"></form>
+        </div>
+        <div class="divider"></div>
+        <div id="information">
+        <form id="cardForm" method="post" action="/names/create/"
+                enctype="multipart/form-data">
+             <input type="submit" name="submit" value="Submit" />
+        </form>
+        </div>
+    </div>
+
+{% endblock %}

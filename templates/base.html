@@ -6,13 +6,13 @@
         <title>Cards - {% block title %}{% endblock %}</title>
         {% load staticfiles %}
         <link href="{% static 'css/base.css' %}" rel="stylesheet">
+        <script src="{% static 'js/dropzone.js' %}"></script>
     </head>
 
     <body>
         <div>
             {% block body_block %}default{% endblock %}
         </div>
-        <hr />
         <div>
             <ul>
                 {% if user.is_authenticated %}

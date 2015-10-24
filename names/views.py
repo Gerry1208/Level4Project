@@ -1,4 +1,4 @@
-from names.forms import UserForm, UserProfileForm
+from names.forms import UserForm, UserProfileForm, cardForm, groupsForm
 from django.shortcuts import render
 from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponseRedirect, HttpResponse
@@ -88,3 +88,20 @@ def user_login(request):
 def user_logout(request):
     logout(request)
     return HttpResponseRedirect('/names/index/')
+
+@login_required
+def create_cards(request):
+    if request.method == 'POST':
+        card_form = cardForm(data=request.POST)
+        group_form = groupsForm(data=request.POST)
+        if(card_form.is_valid):
+            card = card_form.save()
+            group = group_form.save()
+    else:
+        return render(request, 'create.html')
+
+
+
+@login_required
+def upload(request):
+    request.FILES['myfile']
