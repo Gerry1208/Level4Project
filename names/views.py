@@ -98,7 +98,10 @@ def create_cards(request):
             card = card_form.save()
             group = group_form.save()
     else:
-        return render(request, 'create.html')
+        card_form = cardForm(data=request.POST)
+        group_form = groupsForm(data=request.POST)
+
+    return render(request, 'create.html')
 
 
 
