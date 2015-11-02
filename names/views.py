@@ -96,19 +96,29 @@ def user_logout(request):
 def create_cards(request):
     if request.method == 'POST':
         card_form = cardForm(data=request.POST)
-       # group_form = groupsForm(data=request.POST)
-        if card_form.is_valid(): #and group_form.is_valid():
+        if card_form.is_valid():
 
             # new_pic = card_form(picture = request.FILES['file'])
             # new_pic.save()
             card = card_form.save(commit=False)
-          #  group.html = group_form.save(commit=False)
 
             card.save()
-           # group.html.save()
     else:
         card_form = cardForm()
-      #  group_form = groupsForm()
 
-    return render_to_response('create.html', {'card_form': card_form },#, #'group_form':group_form},
+    return render_to_response('create.html', {'card_form': card_form },
+                              context_instance=RequestContext(request))
+
+@csrf_protect
+@login_required
+def groups(request):
+    if request.method == 'POST':
+        group_form = groupsForm(data=request.POST)
+        if group_form.is_valid():
+            group = group_form.save()
+            group.save()
+    else:
+        group_form = groupsForm()
+
+    return render_to_response('groups.html', {'group_form': group_form},
                               context_instance=RequestContext(request))
