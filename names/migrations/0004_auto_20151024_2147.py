@@ -36,7 +36,7 @@ class Migration(migrations.Migration):
         ),
         migrations.AddField(
             model_name='card',
-            name='group',
+            name='group.html',
             field=models.ForeignKey(to='names.groups'),
             preserve_default=True,
         ),

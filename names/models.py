@@ -18,7 +18,7 @@ class groups(models.Model):
 class card(models.Model):
     group = models.ForeignKey(groups)
     name = models.CharField(max_length=100)
-    picture = models.ImageField(upload_to='card_images', blank=True)
+    picture = models.FileField(upload_to='/static/images', blank=True)
     bio = models.CharField(max_length = 1000)
 
     def __unicode__(self):

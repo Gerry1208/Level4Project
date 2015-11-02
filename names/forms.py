@@ -24,5 +24,5 @@ class groupsForm(forms.ModelForm):
 class cardForm(forms.ModelForm):
     class Meta:
         model = card
-        fields = ('name', 'picture', 'bio',)
+        fields = ('name', 'picture', 'bio', 'group')
 

@@ -1,8 +1,10 @@
 from names.forms import UserForm, UserProfileForm, cardForm, groupsForm
-from django.shortcuts import render
+from django.shortcuts import render, render_to_response
 from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth.decorators import login_required
+from django.template import RequestContext
+from django.views.decorators.csrf import csrf_protect
 
 def index(request):
     return render(request, 'index.html', {})
@@ -90,21 +92,23 @@ def user_logout(request):
     return HttpResponseRedirect('/names/index/')
 
 @login_required
+@csrf_protect
 def create_cards(request):
     if request.method == 'POST':
         card_form = cardForm(data=request.POST)
-        group_form = groupsForm(data=request.POST)
-        if(card_form.is_valid):
-            card = card_form.save()
-            group = group_form.save()
+       # group_form = groupsForm(data=request.POST)
+        if card_form.is_valid(): #and group_form.is_valid():
+
+            # new_pic = card_form(picture = request.FILES['file'])
+            # new_pic.save()
+            card = card_form.save(commit=False)
+          #  group.html = group_form.save(commit=False)
+
+            card.save()
+           # group.html.save()
     else:
-        card_form = cardForm(data=request.POST)
-        group_form = groupsForm(data=request.POST)
+        card_form = cardForm()
+      #  group_form = groupsForm()
 
-    return render(request, 'create.html')
-
-
-
-@login_required
-def upload(request):
-    request.FILES['myfile']
+    return render_to_response('create.html', {'card_form': card_form },#, #'group_form':group_form},
+                              context_instance=RequestContext(request))
