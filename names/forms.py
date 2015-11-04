@@ -1,6 +1,8 @@
 from django import forms
 from django.contrib.auth.models import User
-from names.models import UserProfile, groups, card
+from names.models import UserProfile, groupModel, card
+
+#PLACEHOLDERS TO ADD FOR ALL
 
 
 class UserForm(forms.ModelForm):
@@ -18,11 +20,16 @@ class UserProfileForm(forms.ModelForm):
 
 class groupsForm(forms.ModelForm):
     class Meta:
-        model = groups
+        model = groupModel
         fields = ('group_name',)
 
 class cardForm(forms.ModelForm):
     class Meta:
         model = card
-        fields = ('name', 'picture', 'bio', 'group')
+        fields = ('name', 'bio', 'group')
+
+class pictureForm(forms.ModelForm):
+    class Meta:
+        model = card
+        fields = ('picture')
 

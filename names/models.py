@@ -8,15 +8,15 @@ class UserProfile(models.Model):
     def __unicode__(self):
         return self.user.username
 
-class groups(models.Model):
-    user = models.ForeignKey(UserProfile)
+class groupModel(models.Model):
+    user = models.ForeignKey(User)
     group_name = models.CharField(max_length=10)
 
     def __unicode__(self):
         return self.group_name
 
 class card(models.Model):
-    group = models.ForeignKey(groups)
+    group = models.ForeignKey(groupModel)
     name = models.CharField(max_length=100)
     picture = models.FileField(upload_to='/static/images', blank=True)
     bio = models.CharField(max_length = 1000)

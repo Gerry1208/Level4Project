@@ -88,12 +88,12 @@ STATICFILES_DIRS = (
     STATIC_PATH,
 )
 
-AUTHENTICATION_BACKENDS = (
-    'django_auth_ldap.backend.LDAPBackend',
-    'django.contrib.auth.backends.ModelBackend',
-)
+# AUTHENTICATION_BACKENDS = (
+#     'django_auth_ldap.backend.LDAPBackend',
+#     'django.contrib.auth.backends.ModelBackend',
+# )
 
-AUTH_LDAP_SERVER_URI = "" #need tsibilktgbsfgbs server name
+#AUTH_LDAP_SERVER_URI = "" #need tsibilktgbsfgbs server name
 
 MEDIA_URL = '/media/'
 

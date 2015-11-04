@@ -1,10 +1,12 @@
-from names.forms import UserForm, UserProfileForm, cardForm, groupsForm
+from names.forms import UserForm, UserProfileForm, cardForm, groupsForm, pictureForm
 from django.shortcuts import render, render_to_response
 from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.template import RequestContext
 from django.views.decorators.csrf import csrf_protect
+
+#form.cleaned_data for all?
 
 def index(request):
     return render(request, 'index.html', {})
@@ -96,17 +98,18 @@ def user_logout(request):
 def create_cards(request):
     if request.method == 'POST':
         card_form = cardForm(data=request.POST)
-        if card_form.is_valid():
+        picture_form = pictureForm(data=request.POST)
+        if card_form.is_valid() and picture_form.is_valid():
 
-            # new_pic = card_form(picture = request.FILES['file'])
-            # new_pic.save()
+            picture = picture_form.save(commit=False)
             card = card_form.save(commit=False)
 
+            picture.save()
             card.save()
     else:
         card_form = cardForm()
-
-    return render_to_response('create.html', {'card_form': card_form },
+        picture_form = pictureForm()
+    return render_to_response('create.html', {'card_form': card_form, 'picture_form': picture_form},
                               context_instance=RequestContext(request))
 
 @csrf_protect
@@ -115,7 +118,9 @@ def groups(request):
     if request.method == 'POST':
         group_form = groupsForm(data=request.POST)
         if group_form.is_valid():
-            group = group_form.save()
+            group = group_form.save(commit=False)
+
+            group.user = request.user
             group.save()
     else:
         group_form = groupsForm()
