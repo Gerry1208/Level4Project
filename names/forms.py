@@ -28,8 +28,8 @@ class cardForm(forms.ModelForm):
         model = card
         fields = ('name', 'bio', 'group')
 
-class pictureForm(forms.ModelForm):
-    class Meta:
-        model = card
-        fields = ('picture')
+# class pictureForm(forms.ModelForm):
+#     class Meta:
+#         model = card
+#         fields = ('picture',)
 

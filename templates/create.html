@@ -7,46 +7,44 @@
 {% block body_block %}
     <div id="page">
         <div id=dropzone">
-        <form action="/names/create/" class="dropzone" id="picture_form" method="post" enctype="multipart/form-data">
+        <form action=/names/create/ class="dropzone" id="id_cardpicture" method="post" enctype="multipart/form-data" name="cardpicture">
             {% csrf_token %}
-        </form>
+            <div class="divider"></div>
+            <form id="card_form" method="post" action="/names/create/"
+                    enctype="multipart/form-data">
+
+                {% csrf_token %}
+
+              {{ card_form.as_p }}
+            </form>
+            </form>
+            <button id="submit-all">
+            Submit all files
+        </button>
+
         </div>
-        <div class="divider"></div>
-        <div id="information">
-        <form id="card_form" method="post" action="/names/create/"
-                enctype="multipart/form-data">
+            <script type="text/javascript">
+            Dropzone.options.myDropzone = {
 
-            {% csrf_token %}
+                // Prevents Dropzone from uploading dropped files immediately
+                autoProcessQueue : false,
 
-            {{ card_form.as_p }}
+                init : function() {
+                    var submitButton = document.querySelector("#submit-all")
+                    myDropzone = this;
 
-             <input type="submit" name="submit" value="Submit" />
-        </form>
-{#        </div>#}
-{#        <script type="text/javascript">#}
-{#            Dropzone.options.myDropzone = {#}
-{##}
-{#                // Prevents Dropzone from uploading dropped files immediately#}
-{#                autoProcessQueue : false,#}
-{##}
-{#                init : function() {#}
-{#                    var submitButton = document.querySelector("#submit-all")#}
-{#                    myDropzone = this;#}
-{##}
-{#                    submitButton.addEventListener("click", function() {#}
-{#                        myDropzone.processQueue();#}
-{#                        // Tell Dropzone to process all queued files.#}
-{#                    });#}
-{##}
-{#                    // You might want to show the submit button only when#}
-{#                    // files are dropped here:#}
-{#                    this.on("addedfile", function() {#}
-{#                        // Show submit button here and/or inform user to click it.#}
-{#                    });#}
-{##}
-{#                }#}
-{#            };#}
-{#        </script>#}
-{#    </div>#}
+                    submitButton.addEventListener("click", function() {
+                        myDropzone.processQueue();
+                        // Tell Dropzone to process all queued files.
+                    });
 
+                    // You might want to show the submit button only when
+                    // files are dropped here:
+                    this.on("addedfile", function() {
+                        // Show submit button here and/or inform user to click it.
+                    });
+
+                }
+            };
+        </script>
 {% endblock %}
