@@ -1,4 +1,4 @@
-from names.forms import UserForm, UserProfileForm, cardForm, groupsForm
+from names.forms import UserForm, UserProfileForm, cardForm, groupsForm, picForm
 from django.shortcuts import render, render_to_response
 from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponseRedirect, HttpResponse
@@ -101,16 +101,21 @@ def user_logout(request):
 @login_required
 def create_cards(request):
     if request.method == 'POST':
-        card_form = cardForm(request.POST, request.FILES)
-        if card_form.is_valid():
-            instance = card(file = request.FILES['file'])
-            instance.save()
-            new_card = card_form.save()
-            new_card.save()
-            return HttpResponseRedirect(reverse('names.views.create_cards'))
+        card_form = cardForm(data = request.POST)
+        pic_form = picForm(data = request.POST)
+        if card_form.is_valid() and pic_form.is_valid:
+
+            card = card_form.save()
+            card.save()
+
+            pic = pic_form.save(commit=False)
+            pic.student = card
+            pic.file = request.FILES['file']
+            pic.save()
     else:
         card_form = cardForm()
-    return render_to_response('create.html', {'card_form': card_form},
+        pic_form = picForm()
+    return render_to_response('create.html', {'card_form': card_form, 'pic_form':pic_form},
                               context_instance=RequestContext(request))
 
 

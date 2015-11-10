@@ -17,10 +17,14 @@ class groupModel(models.Model):
 
 class card(models.Model):
     group = models.ForeignKey(groupModel)
+    student = models.CharField(max_length = 9, primary_key=True)
     name = models.CharField(max_length=100)
-    file = models.FileField(upload_to='/static/images', null = True)
     bio = models.CharField(max_length = 1000)
     editable = True
 
     def __unicode__(self):
-        return self.name
+        return self.student
+
+class cardPicture(models.Model):
+    student = models.ForeignKey(card)
+    file = models.ImageField(upload_to='/static/images', null = True)
