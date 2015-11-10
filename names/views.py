@@ -5,7 +5,9 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.template import RequestContext
 from django.views.decorators.csrf import csrf_protect
-from names.models import groupModel
+from django.core.urlresolvers import reverse
+from names.models import groupModel, card
+
 
 
 #form.cleaned_data for all?
@@ -95,30 +97,31 @@ def user_logout(request):
     logout(request)
     return HttpResponseRedirect('/names/index/')
 
-@login_required
 @csrf_protect
+@login_required
 def create_cards(request):
     if request.method == 'POST':
         card_form = cardForm(request.POST, request.FILES)
         if card_form.is_valid():
-
-            picture = request.FILES['cardpicture']
-            picture.save()
-
-            card = card_form.save(commit=False)
-
-            card.save()
+            instance = card(file = request.FILES['file'])
+            instance.save()
+            new_card = card_form.save()
+            new_card.save()
+            return HttpResponseRedirect(reverse('names.views.create_cards'))
     else:
         card_form = cardForm()
     return render_to_response('create.html', {'card_form': card_form},
                               context_instance=RequestContext(request))
 
+
 @csrf_protect
 @login_required
 def groups(request):
     if request.method == 'POST':
-        group_form = groupsForm(data=request.POST)
+        group_form = groupsForm(request.POST)
+
         if group_form.is_valid():
+
             group = group_form.save(commit=False)
 
             group.user = request.user

@@ -18,7 +18,7 @@ class groupModel(models.Model):
 class card(models.Model):
     group = models.ForeignKey(groupModel)
     name = models.CharField(max_length=100)
-    picture = models.FileField(upload_to='/static/images')
+    file = models.FileField(upload_to='/static/images', null = True)
     bio = models.CharField(max_length = 1000)
     editable = True
 

@@ -6,45 +6,19 @@
 
 {% block body_block %}
     <div id="page">
-        <div id=dropzone">
-        <form action=/names/create/ class="dropzone" id="id_cardpicture" method="post" enctype="multipart/form-data" name="cardpicture">
+
+        <div class="divider"></div>
+        <form id="card_form" method="post" action="/names/index/"
+              enctype="multipart/form-data">
+
             {% csrf_token %}
-            <div class="divider"></div>
-            <form id="card_form" method="post" action="/names/create/"
-                    enctype="multipart/form-data">
 
-                {% csrf_token %}
+            {{ card_form.as_p }}
 
-              {{ card_form.as_p }}
-            </form>
-            </form>
-            <button id="submit-all">
-            Submit all files
-        </button>
+            <input type="submit" name="submit" value="create" />
+        </form>
 
-        </div>
-            <script type="text/javascript">
-            Dropzone.options.myDropzone = {
 
-                // Prevents Dropzone from uploading dropped files immediately
-                autoProcessQueue : false,
 
-                init : function() {
-                    var submitButton = document.querySelector("#submit-all")
-                    myDropzone = this;
-
-                    submitButton.addEventListener("click", function() {
-                        myDropzone.processQueue();
-                        // Tell Dropzone to process all queued files.
-                    });
-
-                    // You might want to show the submit button only when
-                    // files are dropped here:
-                    this.on("addedfile", function() {
-                        // Show submit button here and/or inform user to click it.
-                    });
-
-                }
-            };
-        </script>
+    </div>
 {% endblock %}
