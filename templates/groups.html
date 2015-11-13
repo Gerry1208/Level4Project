@@ -2,16 +2,37 @@
 
 {% load staticfiles %}
 
-{%  block title %} Groups {% endblock %}
+{%  block title %} View Groups {% endblock %}
 
 {#this needs to be pop up#}
 {% block body_block %}
-    <div id="page">
+
+    <div id="view">
+    <form id="groups_form" method="post" action="/names/groups/"
+                enctype="multipart/form-data">
+        {# this will display all different groups available #}
+        {% if groups %}
+            <ul>
+                {% for group in groups %}
+                <li>{{ group.group_name }}</li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <strong>There are no groups</strong>
+        {% endif %}
+    </form>
+
+    </div>
+
+    <div id="create">
          <form id="group_form" method="post" action="/names/groups/"
                 enctype="multipart/form-data">
-                {% csrf_token %}
+             {% csrf_token %}
+             <fieldset>
+                 <label for="groupname">Group Name</label>
+                 <input type="text" name="groupname" id="groupname" placeholder="Enter a name for your group">
+             </fieldset>
 
-                {{ group_form.as_p }}
 
                 <input type="submit" name="submit" value="create" />
 

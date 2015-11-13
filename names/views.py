@@ -114,32 +114,21 @@ def user_login(request):
     else:
         return render(request, 'login.html', {})
 
+@csrf_protect
+@login_required
+def groups(request):
+    if request.method == 'POST':
+        groupname = request.POST.get('groupname')
+    return render(request, 'groups.html')
+
 @login_required
 def user_logout(request):
     logout(request)
     return HttpResponseRedirect('/names/index/')
 
-@csrf_protect
-@login_required
-def groups(request):
-    if request.method == 'POST':
-        group_form = groupsForm(request.POST)
-
-        if group_form.is_valid():
-
-            group = group_form.save(commit=False)
-
-            group.user = request.user
-            group.save()
-    else:
-        group_form = groupsForm()
-
-    return render_to_response('groups.html', {'group_form': group_form},
-                              context_instance=RequestContext(request))
 
 @csrf_protect
 @login_required
 def groupview(request):
-    user = request.user
-    groups = groupModel.objects.filter(user = user.id).order_by('group_name')
-    return render(request, 'groupview.html', {'groups':groups})
+    groups = groupModel.objects.all()
+    return render_to_response('groups.html', {'groups':groups}, context_instance=RequestContext(request))

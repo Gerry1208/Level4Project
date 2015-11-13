@@ -26,4 +26,4 @@ class card(models.Model):
 
 class cardPicture(models.Model):
     student = models.ForeignKey(card)
-    file = models.ImageField(upload_to='static/images', null = True)
+    file = models.ImageField(upload_to='card_images', null = True)
