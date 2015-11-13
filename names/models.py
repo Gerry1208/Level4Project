@@ -10,7 +10,7 @@ class UserProfile(models.Model):
 
 class groupModel(models.Model):
     user = models.ForeignKey(User)
-    group_name = models.CharField(max_length=10)
+    group_name = models.CharField(max_length=10, unique=True)
 
     def __unicode__(self):
         return self.group_name
@@ -20,11 +20,10 @@ class card(models.Model):
     student = models.CharField(max_length = 9, primary_key=True)
     name = models.CharField(max_length=100)
     bio = models.CharField(max_length = 1000)
-    editable = True
 
     def __unicode__(self):
         return self.student
 
 class cardPicture(models.Model):
     student = models.ForeignKey(card)
-    file = models.ImageField(upload_to='/static/images', null = True)
+    file = models.ImageField(upload_to='static/images', null = True)

@@ -72,6 +72,28 @@ def register(request):
                  'register.html',
             {'user_form': user_form, 'profile_form': profile_form, 'registered': registered} )
 
+@csrf_protect
+@login_required
+def create_cards(request):
+    if request.method == 'POST':
+        card_form = cardForm(data = request.POST)
+        pic_form = picForm(request.POST, request.FILES)
+        if card_form.is_valid() and pic_form.is_valid():
+
+            card = card_form.save()
+            card.save()
+
+            pic = pic_form.save(commit=False)
+            pic.student = card
+            pic.file = request.FILES['file']
+            pic.save()
+    else:
+        card_form = cardForm()
+        pic_form = picForm()
+    return render_to_response('create.html', {'card_form': card_form, 'pic_form':pic_form},
+                              context_instance=RequestContext(request))
+
+
 def user_login(request):
     if request.method == 'POST':
         username = request.POST.get('username')
@@ -96,28 +118,6 @@ def user_login(request):
 def user_logout(request):
     logout(request)
     return HttpResponseRedirect('/names/index/')
-
-@csrf_protect
-@login_required
-def create_cards(request):
-    if request.method == 'POST':
-        card_form = cardForm(data = request.POST)
-        pic_form = picForm(data = request.POST)
-        if card_form.is_valid() and pic_form.is_valid:
-
-            card = card_form.save()
-            card.save()
-
-            pic = pic_form.save(commit=False)
-            pic.student = card
-            pic.file = request.FILES['file']
-            pic.save()
-    else:
-        card_form = cardForm()
-        pic_form = picForm()
-    return render_to_response('create.html', {'card_form': card_form, 'pic_form':pic_form},
-                              context_instance=RequestContext(request))
-
 
 @csrf_protect
 @login_required
