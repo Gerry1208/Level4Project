@@ -8,5 +8,6 @@ urlpatterns = patterns('',
                         url(r'^logout/$', views.user_logout, name='logout'),
                         url(r'^create/$', views.create_cards, name='create'),
                         url(r'^groups/$', views.groupview, name='groupview'),
-                        url(r'^groups/$', views.groups, name='groups'),
+                        url(r'^groupview/$', views.cardview, name='groupview'),
+                        url(r'^quiz/$', views.quiz, name='quiz'),
                        )

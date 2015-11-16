@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% load staticfiles %}
+{% load shuffle %}
+
+{%  block title %} Test {% endblock %}
+
+{% block body_block %}
+    <div id="question">
+        <form id="picture" method="post" action="/names/test/"
+                enctype="multipart/form-data">
+            {% if cards %}
+                {% for pic in pictures %}
+                    Who is This?: <br><img src="{{ pic.file.url }}"style="width:25%;height:25%;" />
+                    <input type="radio" name="student" value="{{ pic.student.name }}"> {{ pic.student.name }}<br>
+                    {% for i in "123"%}
+                        <input type="radio" name="student" value="{{ cards|shuffle }}"> {{ cards|shuffle }}<br>
+                    {% endfor %}
+                {% endfor %}
+            {% else %}
+                <strong>There are no cards available for this group</strong>
+            {% endif %}
+
+
+        </form>
+    </div>
+{% endblock %}

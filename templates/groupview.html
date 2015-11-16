@@ -2,10 +2,28 @@
 
 {% load staticfiles %}
 
-{%  block title %} View Groups {% endblock %}
+{%  block title %} Group {{ group.group_name }} {% endblock %}
 
 {% block body_block %}
-
-
-
+    <form id="cards_form" method="post" action="/names/groupview/"
+                enctype="multipart/form-data">
+        {# this will display all different groups available #}
+        {% if cards %}
+                {% for card in cards %}
+                    <fieldset>
+                        Student name = {{ card.name }}<br>
+                        Student Number = {{ card.student }}<br>
+                        Bio = {{ card.bio }}<br>
+                        {% for p in pictures %}
+                            {% ifequal p.student card %}
+                                Picture = <br> <img src="{{ p.file.url }}"style="width:50%;height:50%;" />
+                            {% endifequal %}
+                        {% endfor %}
+                    </fieldset>
+                {% endfor %}
+                <a href="{% url "quiz" %}?name=a">{{ group.group_name }}</a>
+        {% else %}
+            <strong>There are no cards in this group</strong>
+        {% endif %}
+    </form>
 {% endblock %}

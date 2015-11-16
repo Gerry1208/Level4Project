@@ -32,4 +32,7 @@ class picForm(forms.ModelForm):
         model = cardPicture
         fields = ('file',)
 
+# class qForm(forms.ModelForm):
+#     class Meta:
+#         model = cardP
 

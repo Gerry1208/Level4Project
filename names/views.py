@@ -1,12 +1,13 @@
+from lib2to3.fixes.fix_input import context
 from names.forms import UserForm, UserProfileForm, cardForm, groupsForm, picForm
 from django.shortcuts import render, render_to_response
 from django.contrib.auth import authenticate, login, logout
-from django.http import HttpResponseRedirect, HttpResponse
+from django.http import HttpResponseRedirect, HttpResponse, Http404
 from django.contrib.auth.decorators import login_required
 from django.template import RequestContext
 from django.views.decorators.csrf import csrf_protect
 from django.core.urlresolvers import reverse
-from names.models import groupModel, card
+from names.models import groupModel, card, cardPicture
 
 
 
@@ -69,8 +70,8 @@ def register(request):
 
     # Render the template depending on the context.
     return render(request,
-                 'register.html',
-            {'user_form': user_form, 'profile_form': profile_form, 'registered': registered} )
+                  'register.html',
+                  {'user_form': user_form, 'profile_form': profile_form, 'registered': registered} )
 
 @csrf_protect
 @login_required
@@ -118,8 +119,37 @@ def user_login(request):
 @login_required
 def groups(request):
     if request.method == 'POST':
-        groupname = request.POST.get('groupname')
-    return render(request, 'groups.html')
+        group = groupsForm(request.POST)
+        if group.is_valid():
+            g = group.save(commit=False)
+            g.group_name = request.POST.get('groupname')
+            g.save()
+    else:
+        group = groupsForm()
+
+    return render_to_response('groups.html',{"group":group},context_instance=RequestContext(request))
+
+@csrf_protect
+@login_required
+def cardview(request):
+    group_name = request.GET.get('name')
+    cards = card.objects.filter(group=group_name)
+    pictures = []
+    for c in cards:
+        pictures += cardPicture.objects.filter(student=c.student)
+    return render_to_response('groupview.html', {'cards':cards, 'pictures':pictures}, context_instance=RequestContext(request))
+
+@csrf_protect
+@login_required
+def quiz(request):
+    group_name = request.GET.get('name')
+    cards = card.objects.filter(group=group_name)
+    pictures = []
+    for c in cards:
+        pictures += cardPicture.objects.filter(student=c.student)
+    return render_to_response('quiz.html', {'cards':cards, 'pictures':pictures}, context_instance=RequestContext(request))
+
+
 
 @login_required
 def user_logout(request):
