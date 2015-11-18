@@ -8,6 +8,7 @@ from django.template import RequestContext
 from django.views.decorators.csrf import csrf_protect
 from django.core.urlresolvers import reverse
 from names.models import groupModel, card, cardPicture
+import json
 
 
 
@@ -139,16 +140,32 @@ def cardview(request):
         pictures += cardPicture.objects.filter(student=c.student)
     return render_to_response('groupview.html', {'cards':cards, 'pictures':pictures}, context_instance=RequestContext(request))
 
-@csrf_protect
-@login_required
+# @csrf_protect
+# @login_required
+# def quiz(request):
+#     group_name = request.GET.get('name')
+#     cards = card.objects.filter(group=group_name)
+#     names = card.objects.values_list('name', flat=True).filter(group=group_name).order_by('?')[:3]
+#     pictures = []
+#     for c in cards:
+#         pictures += cardPicture.objects.filter(student=c.student)
+#     return render_to_response('quiz.html', {'cards':cards, 'pictures':pictures, 'names':names}, context_instance=RequestContext(request))
 def quiz(request):
-    group_name = request.GET.get('name')
-    cards = card.objects.filter(group=group_name)
-    pictures = []
-    for c in cards:
-        pictures += cardPicture.objects.filter(student=c.student)
-    return render_to_response('quiz.html', {'cards':cards, 'pictures':pictures}, context_instance=RequestContext(request))
+    if request.is_ajax():
+        group_name = request.GET.get('name')
+        cards = card.objects.filter(group=group_name).order_by('?').first()
+        names = card.objects.values_list('name', flat=True).filter(group=group_name).order_by('?')[:3]
+        pictures = cardPicture.objects.filter(student = cards[0].student)
 
+        json_response = {'cards':cards, 'names':names, 'pictures':pictures}
+        return HttpResponse(json.dumps(json_response),
+                            content_type='application/json')
+    else:
+        group_name = request.GET.get('name')
+        cards = card.objects.filter(group=group_name).first()
+        names = card.objects.values_list('name', flat=True).filter(group=group_name).order_by('?')[:3]
+        pictures = card.objects.filter(student = cards[0].student)
+        return render(request,'quiz.html', {'cards':cards, 'names':names, 'pictures':pictures} )
 
 
 @login_required

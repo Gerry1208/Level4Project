@@ -3,20 +3,21 @@
 {% load staticfiles %}
 {% load shuffle %}
 
-{%  block title %} Test {% endblock %}
+{%  block title %} Quiz {% endblock %}
 
 {% block body_block %}
     <div id="question">
-        <form id="picture" method="post" action="/names/test/"
-                enctype="multipart/form-data">
+        <form id="picture" method="post" action="{% url "quiz" %}?name=a"
+              enctype="multipart/form-data">
+            {% csrf_token %}
+            <strong>{{ cards}}</strong>
             {% if cards %}
-                {% for pic in pictures %}
-                    Who is This?: <br><img src="{{ pic.file.url }}"style="width:25%;height:25%;" />
-                    <input type="radio" name="student" value="{{ pic.student.name }}"> {{ pic.student.name }}<br>
-                    {% for i in "123"%}
-                        <input type="radio" name="student" value="{{ cards|shuffle }}"> {{ cards|shuffle }}<br>
-                    {% endfor %}
+                Who is This?: <br><img src="{{ pictures.file.url }}"style="width:25%;height:25%;" /><br>
+                <input type="radio" name="student" value="{{ pictures.student.name }}"> {{ pictures.student.name }}<br>
+                {% for i in names%}
+                    <input type="radio" name="student" value="{{ i }}"> {{ i }}<br>
                 {% endfor %}
+                <button class="nextq">Submit answer</button>
             {% else %}
                 <strong>There are no cards available for this group</strong>
             {% endif %}
@@ -24,4 +25,10 @@
 
         </form>
     </div>
+
+    <script>
+        $('.nextq').click(function(json_response){
+            console.log(json_response.card)
+        })
+    </script>
 {% endblock %}
