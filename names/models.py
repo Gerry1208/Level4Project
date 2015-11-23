@@ -35,6 +35,9 @@ class cardPicture(models.Model):
     def __unicode__(self):
         return self.student.student
 
+class bulkUpload(models.Model):
+    file = models.FileField(upload_to='csv_files', null = True)
+
 # class Quiz(models.Model):
 #     group = models.ForeignKey(groupModel)
 #

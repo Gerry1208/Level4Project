@@ -8,33 +8,23 @@
 {% block body_block %}
 
     <div id="view">
-        <form id="groups_form" method="post" action="/names/groupview/"
+        <form id="groups_form" method="post" action="/names/cardview/"
               enctype="multipart/form-data">
             {# this will display all different groups available #}
             {% if groups %}
                 {% for group in groups %}
-                    <a href="{% url "groupview" %}?name={{ group.group_name }}">{{ group.group_name }}</a>
+                    <a href="{% url "cardview" %}?name={{ group.group_name }}">{{ group.group_name }}</a>
                 {% endfor %}
             {% else %}
                 <strong>There are no groups</strong>
             {% endif %}
         </form>
-
-    </div>
-
-    <div id="create">
         <form id="group_form" method="post" action="/names/groups/"
               enctype="multipart/form-data">
             {% csrf_token %}
-            <button onclick="myFunction()" name = groupname>Create new group</button>
-            {#  Create a new group: <input type="text" name="groupname" placeholder="Please enter groupname here"#}
-
+            {{ group_form.as_p }}
 
         </form>
     </div>
-    <script>
-        function myFunction(){
-            var groupName = prompt("What would you like to name the group?");
-        }
-    </script>
+
 {% endblock %}

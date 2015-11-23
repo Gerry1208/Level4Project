@@ -1,14 +1,15 @@
 from lib2to3.fixes.fix_input import context
-from names.forms import UserForm, UserProfileForm, cardForm, groupsForm, picForm
+from names.forms import UserForm, UserProfileForm, cardForm, groupsForm, picForm, bulkUpload
 from django.shortcuts import render, render_to_response
 from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponseRedirect, HttpResponse, Http404
 from django.contrib.auth.decorators import login_required
 from django.template import RequestContext
-from django.views.decorators.csrf import csrf_protect
+from django.views.decorators.csrf import csrf_protect, csrf_exempt
 from django.core.urlresolvers import reverse
 from names.models import groupModel, card, cardPicture
 import json
+import csv
 
 
 
@@ -74,6 +75,20 @@ def register(request):
                   'register.html',
                   {'user_form': user_form, 'profile_form': profile_form, 'registered': registered} )
 
+
+@login_required
+def upload(request):
+    if request.method == "POST":
+        form = bulkUpload(request.POST, request.FILES)
+        if form.is_valid():
+            form.save(request)
+            context = {"form":form}
+            return render_to_response('upload.html', context, context_instance=RequestContext(request))
+    else:
+        form = bulkUpload()
+        context = {"form":form}
+        return render_to_response('upload.html', context, context_instance=RequestContext(request))
+
 @csrf_protect
 @login_required
 def create_cards(request):
@@ -138,35 +153,21 @@ def cardview(request):
     pictures = []
     for c in cards:
         pictures += cardPicture.objects.filter(student=c.student)
-    return render_to_response('groupview.html', {'cards':cards, 'pictures':pictures}, context_instance=RequestContext(request))
+    return render_to_response('cardview.html', {'cards':cards, 'pictures':pictures}, context_instance=RequestContext(request))
 
-# @csrf_protect
-# @login_required
-# def quiz(request):
-#     group_name = request.GET.get('name')
-#     cards = card.objects.filter(group=group_name)
-#     names = card.objects.values_list('name', flat=True).filter(group=group_name).order_by('?')[:3]
-#     pictures = []
-#     for c in cards:
-#         pictures += cardPicture.objects.filter(student=c.student)
-#     return render_to_response('quiz.html', {'cards':cards, 'pictures':pictures, 'names':names}, context_instance=RequestContext(request))
+@login_required
 def quiz(request):
-    if request.is_ajax():
-        group_name = request.GET.get('name')
-        cards = card.objects.filter(group=group_name).order_by('?').first()
-        names = card.objects.values_list('name', flat=True).filter(group=group_name).order_by('?')[:3]
-        pictures = cardPicture.objects.filter(student = cards[0].student)
+    group_name = request.GET.get('name')
+    cards = card.objects.filter(group=group_name).order_by('?').first()
+    names = card.objects.values_list('name', flat=True).filter(group=group_name).order_by('?')[:3]
+    pictures = cardPicture.objects.filter(student=cards.student)
+    score = request.GET.get('score')
+    return render(request, 'quiz.html', {'cards':cards, 'pictures':pictures, 'names':names})
 
-        json_response = {'cards':cards, 'names':names, 'pictures':pictures}
-        return HttpResponse(json.dumps(json_response),
-                            content_type='application/json')
-    else:
-        group_name = request.GET.get('name')
-        cards = card.objects.filter(group=group_name).first()
-        names = card.objects.values_list('name', flat=True).filter(group=group_name).order_by('?')[:3]
-        pictures = card.objects.filter(student = cards[0].student)
-        return render(request,'quiz.html', {'cards':cards, 'names':names, 'pictures':pictures} )
-
+# def SelfMarkQuiz(request):
+#     group_name = request.GET.get('name')
+#     self_cards = card.objects.filter(group=group_name).order_by('?')
+#     return render('quiz.html', {'self_cards':self_cards}, context_instance=RequestContext(request))
 
 @login_required
 def user_logout(request):
@@ -177,5 +178,12 @@ def user_logout(request):
 @csrf_protect
 @login_required
 def groupview(request):
+    if request.method == 'POST':
+        group_form = groupsForm(data = request.POST)
+        if group_form.is_valid():
+            g = group_form.save(commit=False)
+            g.user = request.user
+            g.save()
     groups = groupModel.objects.all()
-    return render_to_response('groups.html', {'groups':groups}, context_instance=RequestContext(request))
+    group_form = groupsForm()
+    return render_to_response('groups.html', {'groups':groups, 'group_form':group_form}, context_instance=RequestContext(request))

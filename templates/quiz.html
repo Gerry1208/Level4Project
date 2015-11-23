@@ -7,28 +7,38 @@
 
 {% block body_block %}
     <div id="question">
-        <form id="picture" method="post" action="{% url "quiz" %}?name=a"
-              enctype="multipart/form-data">
-            {% csrf_token %}
-            <strong>{{ cards}}</strong>
-            {% if cards %}
-                Who is This?: <br><img src="{{ pictures.file.url }}"style="width:25%;height:25%;" /><br>
-                <input type="radio" name="student" value="{{ pictures.student.name }}"> {{ pictures.student.name }}<br>
-                {% for i in names%}
-                    <input type="radio" name="student" value="{{ i }}"> {{ i }}<br>
-                {% endfor %}
-                <button class="nextq">Submit answer</button>
-            {% else %}
-                <strong>There are no cards available for this group</strong>
-            {% endif %}
+        {% if names %}
+            Who is This?: <br><img src="{{ pictures.0.file.url }}"style="width:25%;height:25%;" /><br>
+            <input type="radio" name="student" id="{{ cards.student }}"> {{ cards.name }}<br>
+            {% for i in names%}
+                <input type="radio" name="student" value="{{ i }}"> {{ i }}<br>
+            {% endfor %}
+            <button id="nextq" data-cards="{{ cards }}">Submit answer</button>
+        {% else %}
+            <strong>There are no cards available for this group</strong>
+        {% endif %}
 
 
-        </form>
     </div>
 
     <script>
-        $('.nextq').click(function(json_response){
-            console.log(json_response.card)
+        $(document).ready(function(){
+            score = 0;
+            $('#nextq').click(function(json_response){
+                $.get('?name=a', function(card){
+                    $("#question").html(card)
+
+                });
+                if(document.getElementById('{{ cards.student }}').checked){
+                    score += 1;
+                    alert(score)
+
+                }
+            })
         })
+
+
+
+
     </script>
 {% endblock %}

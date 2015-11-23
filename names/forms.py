@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib.auth.models import User
 from names.models import UserProfile, groupModel, card, cardPicture
+import csv
 #PLACEHOLDERS TO ADD FOR ALL
 
 
@@ -32,7 +33,20 @@ class picForm(forms.ModelForm):
         model = cardPicture
         fields = ('file',)
 
-# class qForm(forms.ModelForm):
-#     class Meta:
-#         model = cardP
+class bulkUpload(forms.Form):
+    file = forms.FileField()
+
+    def save(self, request):
+        records = csv.reader(self.cleaned_data["file"])
+        for line in records:
+            group_input = groupModel()
+            input_data = card()
+            group_input.group_name = line[2]
+            group_input.user = request.user
+            group_input.save()
+            input_data.student = line[0]
+            input_data.name = line[1]
+            input_data.group = group_input
+            input_data.save()
+
 
