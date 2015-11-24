@@ -21,7 +21,7 @@
                         {% endfor %}
                     </fieldset>
                 {% endfor %}
-                <a href="{% url "quiz" %}?name=a">{{ group.group_name }}</a>
+                <a href="{% url "quiz" %}?name={{ group }}">{{ group }}</a>
         {% else %}
             <strong>There are no cards in this group</strong>
         {% endif %}

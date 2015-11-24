@@ -2,14 +2,13 @@ from lib2to3.fixes.fix_input import context
 from names.forms import UserForm, UserProfileForm, cardForm, groupsForm, picForm, bulkUpload
 from django.shortcuts import render, render_to_response
 from django.contrib.auth import authenticate, login, logout
-from django.http import HttpResponseRedirect, HttpResponse, Http404
+from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.template import RequestContext
-from django.views.decorators.csrf import csrf_protect, csrf_exempt
-from django.core.urlresolvers import reverse
+from django.views.decorators.csrf import csrf_protect
 from names.models import groupModel, card, cardPicture
-import json
-import csv
+from filer.fields.image import FilerImageField
+from filer.fields.file import FilerFileField
 
 
 
@@ -151,9 +150,10 @@ def cardview(request):
     group_name = request.GET.get('name')
     cards = card.objects.filter(group=group_name)
     pictures = []
+    group = group_name
     for c in cards:
         pictures += cardPicture.objects.filter(student=c.student)
-    return render_to_response('cardview.html', {'cards':cards, 'pictures':pictures}, context_instance=RequestContext(request))
+    return render_to_response('cardview.html', {'cards':cards, 'pictures':pictures, 'group':group}, context_instance=RequestContext(request))
 
 @login_required
 def quiz(request):
@@ -164,10 +164,13 @@ def quiz(request):
     score = request.GET.get('score')
     return render(request, 'quiz.html', {'cards':cards, 'pictures':pictures, 'names':names})
 
-# def SelfMarkQuiz(request):
-#     group_name = request.GET.get('name')
-#     self_cards = card.objects.filter(group=group_name).order_by('?')
-#     return render('quiz.html', {'self_cards':self_cards}, context_instance=RequestContext(request))
+def SelfMarkQuiz(request):
+    group_name = request.GET.get('name')
+    self_cards = card.objects.filter(group=group_name).order_by('?')
+    pictures = []
+    for c in self_cards:
+        pictures += cardPicture.objects.filter(student = c)
+    return render('quiz.html', {'self_cards':self_cards, 'pictures':pictures}, context_instance=RequestContext(request))
 
 @login_required
 def user_logout(request):

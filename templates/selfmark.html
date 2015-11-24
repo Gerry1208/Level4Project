@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% load staticfiles %}
+
+{%  block title %} Mark yourself! {% endblock %}
+
+{% block body_block %}
+    {% if self_cards %}
+        {% for c in self_cards %}
+            {% for p in pictures %}
+                {% ifequal p.student c %}
+                    Who is This:<br>{{ p.file.url}}
+                    <p hidden>name = {{ c.name }}</p>
+                {% endifequal %}
+            {% endfor %}
+        {% endfor %}
+    {% endif %}
+
+{% endblock %}

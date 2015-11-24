@@ -1,7 +1,6 @@
 {% extends 'base.html' %}
 
 {% load staticfiles %}
-{% load shuffle %}
 
 {%  block title %} Quiz {% endblock %}
 
@@ -25,7 +24,7 @@
         $(document).ready(function(){
             score = 0;
             $('#nextq').click(function(json_response){
-                $.get('?name=a', function(card){
+                $.get('?name={{ cards.group.group_name }}', function(card){
                     $("#question").html(card)
 
                 });

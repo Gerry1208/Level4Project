@@ -1,12 +1,11 @@
 {% extends 'base.html' %}
 
 {% load staticfiles %}
-{% load loadcsv %}
 
 {%  block title %} Create a card {% endblock %}
 
 {% block body_block %}
-    <form id="bulk_upload" method="post" action="/names/upload/"
+    <form id="bulk_upload" method="post" action="/names/groups/"
           enctype="multipart/form-data">
         {% csrf_token %}
 
