@@ -1,26 +1,29 @@
 <!DOCTYPE html>
 
 <html>
-    <head lang="en">
-        <meta charset="UTF-8">
-        <title>Cards - {% block title %}{% endblock %}</title>
-        {% load staticfiles %}
-        <link href="{% static 'css/base.css' %}" rel="stylesheet">
-        <script src="{% static 'js/dropzone.js' %}"></script>
-        <script src="{% static 'js/jquery.js' %}"></script>
-    </head>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>Cards - {% block title %}{% endblock %}</title>
+    {% load staticfiles %}
+    <link href="{% static 'css/base.css' %}" rel="stylesheet">
+    <script src="{% static 'js/dropzone.js' %}"></script>
+    <script src="{% static 'js/jquery.js' %}"></script>
+</head>
 
-    <body>
-        <div id="left margin"></div>
-        <div id="main">
-            {% block body_block %}default{% endblock %}
-        </div>
-        <div>
-            <ul>
-                {% if user.is_authenticated %}
-                {% else %}
-                {% endif %}
-            </ul>
-        </div>
-    </body>
+<body>
+<div id="left margin" style="float:left">
+    <ul>
+{#        {% if user.is_authenticated %}#}
+{#            <h1>{{ user }}</h1>#}
+{#            <a href="{% url "groupview" %}">Go to group list</a>#}
+{#            <a href="{% url "create" %}">Create a new card</a>#}
+            {#                    <href url="{% url "" %}"#}
+{#        {% else %}#}
+{#        {% endif %}#}
+    </ul>
+</div>
+<div id="main" style="float:right">
+    {% block body_block %}default{% endblock %}
+</div>
+</body>
 </html>

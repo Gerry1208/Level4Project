@@ -7,8 +7,6 @@ from django.contrib.auth.decorators import login_required
 from django.template import RequestContext
 from django.views.decorators.csrf import csrf_protect
 from names.models import groupModel, card, cardPicture
-from filer.fields.image import FilerImageField
-from filer.fields.file import FilerFileField
 
 
 
@@ -120,7 +118,7 @@ def user_login(request):
         if user:
             if user.is_active:
                 login(request,user)
-                return HttpResponseRedirect('/cards/index/')
+                return HttpResponseRedirect('/names/index/')
             else:
                 return HttpResponse("Your rango account is disabled")
 
@@ -164,13 +162,14 @@ def quiz(request):
     score = request.GET.get('score')
     return render(request, 'quiz.html', {'cards':cards, 'pictures':pictures, 'names':names})
 
+@login_required
 def SelfMarkQuiz(request):
     group_name = request.GET.get('name')
     self_cards = card.objects.filter(group=group_name).order_by('?')
     pictures = []
     for c in self_cards:
         pictures += cardPicture.objects.filter(student = c)
-    return render('quiz.html', {'self_cards':self_cards, 'pictures':pictures}, context_instance=RequestContext(request))
+    return render_to_response('selfmark.html', {'self_cards':self_cards, 'pictures':pictures}, context_instance=RequestContext(request))
 
 @login_required
 def user_logout(request):
@@ -187,6 +186,22 @@ def groupview(request):
             g = group_form.save(commit=False)
             g.user = request.user
             g.save()
-    groups = groupModel.objects.all()
+    groups = groupModel.objects.filter(user = request.user)
     group_form = groupsForm()
     return render_to_response('groups.html', {'groups':groups, 'group_form':group_form}, context_instance=RequestContext(request))
+
+@login_required
+def addPicture(request):
+    c = request.GET.get('card')
+    cards = card.objects.filter(student = c).first()
+    if request.method == 'POST':
+        pic_form = picForm(request.POST, request.FILES)
+        if pic_form.is_valid():
+            pic = pic_form.save(commit=False)
+            pic.student = cards
+            pic.file = request.FILES['file']
+            pic.save()
+    else:
+        pic_form = picForm()
+
+    return render_to_response('addpicture.html', {'pic_form':pic_form, 'card':cards}, context_instance=RequestContext(request))

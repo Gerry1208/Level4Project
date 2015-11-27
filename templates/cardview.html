@@ -14,14 +14,18 @@
                         Student name = {{ card.name }}<br>
                         Student Number = {{ card.student }}<br>
                         Bio = {{ card.bio }}<br>
-                        {% for p in pictures %}
-                            {% ifequal p.student card %}
-                                Picture = <br> <img src="{{ p.file.url }}"style="width:50%;height:50%;" />
-                            {% endifequal %}
-                        {% endfor %}
+                        {% if pictures %}
+                            {% for p in pictures %}
+                                {% ifequal p.student card %}
+                                    Picture = <br> <img src="{{ p.file.url }}"style="width:50%;height:50%;" />
+                                {% endifequal %}
+                            {% endfor %}
+                        {% else %}
+                            <a href="{% url "addpicture" %}?card={{ card }}">add a picture for {{ card.name }}</a>
+                        {% endif %}
                     </fieldset>
                 {% endfor %}
-                <a href="{% url "quiz" %}?name={{ group }}">{{ group }}</a>
+                <a href="{% url "quiz" %}?name={{ group }}">Quiz</a>
         {% else %}
             <strong>There are no cards in this group</strong>
         {% endif %}

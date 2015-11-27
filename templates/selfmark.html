@@ -9,11 +9,20 @@
         {% for c in self_cards %}
             {% for p in pictures %}
                 {% ifequal p.student c %}
-                    Who is This:<br>{{ p.file.url}}
+                    Who is This:<br><img src="{{ p.file.url }}"style="width:50%;height:50%;" />
                     <p hidden>name = {{ c.name }}</p>
+                    <button id="showname">Show Name</button><br>
                 {% endifequal %}
             {% endfor %}
         {% endfor %}
     {% endif %}
 
+    <script>
+    $(document).ready(function(){
+            $('#showname').click(function(json_response){
+                $("p").show()
+                $('#showname').hide()
+                });
+    });
+    </script>
 {% endblock %}

@@ -22,16 +22,20 @@
 
     <script>
         $(document).ready(function(){
-            score = 0;
+
             $('#nextq').click(function(json_response){
                 $.get('?name={{ cards.group.group_name }}', function(card){
                     $("#question").html(card)
 
                 });
                 if(document.getElementById('{{ cards.student }}').checked){
-                    score += 1;
-                    alert(score)
 
+                    var score = document.getElementById('score').value;
+                           alert("hello")
+                    var new_score = parseInt(score,10) + 1;
+                    alert(score);
+                    document.getElementById('qty').value = new_score;
+                    return new_score;
                 }
             })
         })

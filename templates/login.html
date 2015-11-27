@@ -6,7 +6,7 @@
 {% block title %} Login{% endblock %}
 
 {% block body_block %}
-    <form id="login_form" method="post" action="/names/index/">
+    <form id="login_form" method="post" action="/names/login/">
         {% csrf_token %}
         Username: <input type="text" name="username" value="" size="50" />
         <br />
