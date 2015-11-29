@@ -13,6 +13,16 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
+            name='bulkUpload',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('file', models.FileField(null=True, upload_to=b'csv_files')),
+            ],
+            options={
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
             name='card',
             fields=[
                 ('student', models.CharField(max_length=9, serialize=False, primary_key=True)),
@@ -27,7 +37,7 @@ class Migration(migrations.Migration):
             name='cardPicture',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('file', models.ImageField(null=True, upload_to=b'/static/images')),
+                ('file', models.ImageField(null=True, upload_to=b'card_images')),
                 ('student', models.ForeignKey(to='names.card')),
             ],
             options={
@@ -37,9 +47,8 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='groupModel',
             fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('group_name', models.CharField(max_length=10)),
-                ('user', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
+                ('group_name', models.CharField(max_length=10, unique=True, serialize=False, primary_key=True)),
+                ('user', models.ManyToManyField(to=settings.AUTH_USER_MODEL)),
             ],
             options={
             },

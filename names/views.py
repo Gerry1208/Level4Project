@@ -153,14 +153,18 @@ def cardview(request):
         pictures += cardPicture.objects.filter(student=c.student)
     return render_to_response('cardview.html', {'cards':cards, 'pictures':pictures, 'group':group}, context_instance=RequestContext(request))
 
+
 @login_required
 def quiz(request):
+    s = 0
+    if 'score' in request.session:
+        s = request.session['score'] + 1
     group_name = request.GET.get('name')
     cards = card.objects.filter(group=group_name).order_by('?').first()
     names = card.objects.values_list('name', flat=True).filter(group=group_name).order_by('?')[:3]
     pictures = cardPicture.objects.filter(student=cards.student)
-    score = request.GET.get('score')
-    return render(request, 'quiz.html', {'cards':cards, 'pictures':pictures, 'names':names})
+
+    return render_to_response('quiz.html', {'cards':cards, 'pictures':pictures, 'names':names, 'score':s}, context_instance=RequestContext(request))
 
 @login_required
 def SelfMarkQuiz(request):
@@ -184,7 +188,7 @@ def groupview(request):
         group_form = groupsForm(data = request.POST)
         if group_form.is_valid():
             g = group_form.save(commit=False)
-            g.user = request.user
+            g.user.add(request.user.id)
             g.save()
     groups = groupModel.objects.filter(user = request.user)
     group_form = groupsForm()

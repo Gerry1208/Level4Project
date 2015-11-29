@@ -10,20 +10,24 @@
         {# this will display all different groups available #}
         {% if cards %}
                 {% for card in cards %}
-                    <fieldset>
-                        Student name = {{ card.name }}<br>
-                        Student Number = {{ card.student }}<br>
-                        Bio = {{ card.bio }}<br>
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">Student: {{ card.name }}</h3>
+                        </div>
+                        <div class="panel-body">
+                        Student Number: {{ card.student }}<br>
+                        Bio: {{ card.bio }}<br>
                         {% if pictures %}
                             {% for p in pictures %}
                                 {% ifequal p.student card %}
-                                    Picture = <br> <img src="{{ p.file.url }}"style="width:50%;height:50%;" />
+                                    Picture: <br> <img src="{{ p.file.url }}"style="width:50%;height:50%;" />
                                 {% endifequal %}
                             {% endfor %}
                         {% else %}
                             <a href="{% url "addpicture" %}?card={{ card }}">add a picture for {{ card.name }}</a>
                         {% endif %}
-                    </fieldset>
+                        </div>
+                    </div>
                 {% endfor %}
                 <a href="{% url "quiz" %}?name={{ group }}">Quiz</a>
         {% else %}

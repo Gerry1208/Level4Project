@@ -9,9 +9,9 @@ class UserProfile(models.Model):
     def __unicode__(self):
         return self.user.username
 
-#This Model is for groups, and is related to user by a many to one relationship
+#This Model is for groups, and is related to user by a many to many relationship
 class groupModel(models.Model):
-    user = models.ForeignKey(User)
+    user = models.ManyToManyField(User)
     group_name = models.CharField(max_length=10, unique=True, primary_key=True)
 
     def __unicode__(self):

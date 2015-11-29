@@ -7,6 +7,14 @@
 {% block body_block %}
     <form id="cards_form" method="post" action="{% url "addpicture" %}?card=2027289d"
                 enctype="multipart/form-data">
+
+                    {% if request.user_agent.is_mobile %}
+
+                    {% else %}
+
+                    {% endif %}
+
+
                     {% csrf_token %}
 
                     {{ pic_form.as_p }}

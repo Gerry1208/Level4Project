@@ -5,25 +5,54 @@
     <meta charset="UTF-8">
     <title>Cards - {% block title %}{% endblock %}</title>
     {% load staticfiles %}
-    <link href="{% static 'css/base.css' %}" rel="stylesheet">
+    <link href="{% static 'css/bootstrap-fluid-adj.css' %}" rel="stylesheet">
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet" media="screen">
     <script src="{% static 'js/dropzone.js' %}"></script>
     <script src="{% static 'js/jquery.js' %}"></script>
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
 </head>
 
 <body>
-<div id="left margin" style="float:left">
-    <ul>
-{#        {% if user.is_authenticated %}#}
-{#            <h1>{{ user }}</h1>#}
-{#            <a href="{% url "groupview" %}">Go to group list</a>#}
-{#            <a href="{% url "create" %}">Create a new card</a>#}
-            {#                    <href url="{% url "" %}"#}
-{#        {% else %}#}
-{#        {% endif %}#}
-    </ul>
+<nav class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+
+            <a class="navbar-brand" href="/names/index/"> Names </a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse" aria-expanded="false" style="height: 1px;">
+            <ul class="nav navbar-nav">
+                <li class="active">
+                    <a href="{% url "groupview" %}">Groups</a>
+                </li>
+                <li>
+                    <a href="{% url "create" %}">Create a card</a>
+                </li>
+                <li>
+                    <a href="{% url "upload" %}">Bulk Upload</a>
+                </li>
+            </ul>
+            <p class="nav navbar-nav navbar-right">
+                {% if user.is_authenticated %}
+                    You are logged in as {{ user.username }}
+                {% else %}
+                    <a href="/names/login" class="navbar-link">Login here</a>
+                {% endif %}
+            </p>
+        </div>
+    </div>
+</nav>
+
+<div class="jumbotron">
+    {% block body_block %}
+    {% endblock %}
 </div>
-<div id="main" style="float:right">
-    {% block body_block %}default{% endblock %}
-</div>
+
+
 </body>
 </html>

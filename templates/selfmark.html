@@ -12,17 +12,26 @@
                     Who is This:<br><img src="{{ p.file.url }}"style="width:50%;height:50%;" />
                     <p hidden>name = {{ c.name }}</p>
                     <button id="showname">Show Name</button><br>
+                    <button id="correct" hidden> Correct </button>
+                    <button id="wrong" hidden> Wrong </button>
                 {% endifequal %}
             {% endfor %}
         {% endfor %}
     {% endif %}
 
     <script>
+    var score = 0;
     $(document).ready(function(){
             $('#showname').click(function(json_response){
-                $("p").show()
-                $('#showname').hide()
+                $("p").show();
+                $('#correct').show();
+                $('#wrong').show();
+                $('#showname').hide();
                 });
+            $('#correct').click(function(json_response){
+                score ++;
+                alert(score)
+                })
     });
     </script>
 {% endblock %}

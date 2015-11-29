@@ -1,11 +1,12 @@
 {% extends 'base.html' %}
 
 {% load staticfiles %}
-
-{%  block title %} Quiz {% endblock %}
+{% load add %}
+{% block title %} Quiz {% endblock %}
 
 {% block body_block %}
     <div id="question">
+        <strong>{{ score }}</strong>
         {% if names %}
             Who is This?: <br><img src="{{ pictures.0.file.url }}"style="width:25%;height:25%;" /><br>
             <input type="radio" name="student" id="{{ cards.student }}"> {{ cards.name }}<br>
@@ -16,29 +17,22 @@
         {% else %}
             <strong>There are no cards available for this group</strong>
         {% endif %}
-
-
     </div>
 
     <script>
         $(document).ready(function(){
-
-            $('#nextq').click(function(json_response){
-                $.get('?name={{ cards.group.group_name }}', function(card){
-                    $("#question").html(card)
-
-                });
-                if(document.getElementById('{{ cards.student }}').checked){
-
-                    var score = document.getElementById('score').value;
-                           alert("hello")
-                    var new_score = parseInt(score,10) + 1;
-                    alert(score);
-                    document.getElementById('qty').value = new_score;
-                    return new_score;
+            $('#nextq').click(function(json_response) {
+                if (document.getElementById('{{ cards.student }}').checked) {
+                    alert({{ score }})
                 }
+                $.get('?name={{ cards.group.group_name }}', function(data){
+                    $('#question').html(data)
+
+                })
             })
-        })
+            })
+
+
 
 
 
