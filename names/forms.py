@@ -42,7 +42,7 @@ class bulkUpload(forms.Form):
             group_input = groupModel()
             input_data = card()
             group_input.group_name = line[2]
-            group_input.user = request.user
+            group_input.user.add(request.user.id)
             group_input.save()
             input_data.student = line[0]
             input_data.name = line[1]

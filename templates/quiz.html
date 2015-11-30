@@ -2,40 +2,87 @@
 
 {% load staticfiles %}
 {% load add %}
+{% load nxt %}
 {% block title %} Quiz {% endblock %}
 
 {% block body_block %}
-    <div id="question">
-        <strong>{{ score }}</strong>
-        {% if names %}
-            Who is This?: <br><img src="{{ pictures.0.file.url }}"style="width:25%;height:25%;" /><br>
-            <input type="radio" name="student" id="{{ cards.student }}"> {{ cards.name }}<br>
-            {% for i in names%}
-                <input type="radio" name="student" value="{{ i }}"> {{ i }}<br>
-            {% endfor %}
-            <button id="nextq" data-cards="{{ cards }}">Submit answer</button>
-        {% else %}
-            <strong>There are no cards available for this group</strong>
-        {% endif %}
+    <div class="container">
+        {{ cards }}
     </div>
 
-    <script>
+
+
+    <script type="text/javascript">
         $(document).ready(function(){
+
             $('#nextq').click(function(json_response) {
-                if (document.getElementById('{{ cards.student }}').checked) {
-                    alert({{ score }})
-                }
-                $.get('?name={{ cards.group.group_name }}', function(data){
-                    $('#question').html(data)
 
-                })
+                    counter = document.getElementById("nextq").value
+
+                    {% with counter=counter|add:1 %}
+                        $('#inner').load(function(){
+                            {{ counter|add:1 }}
+                        })
+                    {% endwith %}
+
+                    {% with score=score|add:1 %}
+                        score= {{ score }}
+                        alert(score)
+                    {% endwith %}
+
+{#                var cards = '{{ cards|safe }}';#}
+{#                var names = '{{ names }}';#}
+{#                var pictures = '{{ pictures|safe }}';#}
+{##}
+{#                $.ajax({#}
+{#                    type:"GET",#}
+{#                    data:{score:score, pictures:pictures, names:names, cards:cards},#}
+{#                    url:"{% url "quiz" %}?name=a",#}
+{#                    success:function(data){#}
+{#                        $('#question').html(data)#}
+{#                    }#}
+{#                })#}
+
             })
             })
-
-
-
-
-
-
     </script>
 {% endblock %}
+
+
+
+
+{#        <strong>{{ score }}</strong>#}
+{#        {% if names %}#}
+{#            #}
+{#            Who is this student?: <br><img src="{{ pictures.0.file.url }}"style="width:50%;height:50%;" /><br>#}
+{#            <input type="radio" name="student" id="{{ cards.student }}"> {{ cards.name }}<br>#}
+{#            {% for i in names%}#}
+{#                <input type="radio" name="student" value="{{ i }}"> {{ i }}<br>#}
+{#            {% endfor %}#}
+{#            <button id="nextq" data-cards="{{ cards }}">Submit answer</button>#}
+{#        {% else %}#}
+{#            <strong>There are no cards available for this group</strong>#}
+{#        {% endif %}#}
+
+{#        <div id="question">#}
+{#        request.session[cards#}
+{#        {% for c in cards %}#}
+{#            #}
+{#            {% for pic in pictures %}#}
+{#            {% ifequal pic.student c %}#}
+{#                <img src="{{ pic.file.url }}"style="width:50%;height:50%;" /><br>#}
+{#                <br>#}
+{#            {% endifequal %}#}
+{#            {% endfor %}#}
+{#        {% endfor %}#}
+{#            {% with counter=0 %}#}
+{#                <div id="inner">#}
+{#                {% with card=cards|nxt:counter %}#}
+{#                    <strong> {{ cards.first.name }}</strong>#}
+{#                    {{ cards }}#}
+{#                    {{ score }}#}
+{#                    <button value='{{ counter }}' id="nextq" data-cards="{{ cards }}">Submit answer</button>#}
+{#                {% endwith %}#}
+{#                </div>#}
+{#            {% endwith %}#}
+{#        </div>#}

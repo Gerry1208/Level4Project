@@ -5,7 +5,7 @@
 {%  block title %} Create a card {% endblock %}
 
 {% block body_block %}
-    <form id="bulk_upload" method="post" action="/names/groups/"
+    <form id="bulk_upload" method="post" action="/names/upload/"
           enctype="multipart/form-data">
         {% csrf_token %}
 

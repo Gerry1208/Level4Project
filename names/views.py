@@ -7,7 +7,9 @@ from django.contrib.auth.decorators import login_required
 from django.template import RequestContext
 from django.views.decorators.csrf import csrf_protect
 from names.models import groupModel, card, cardPicture
-
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+import pickle
+from django.core import serializers
 
 
 #form.cleaned_data for all?
@@ -156,15 +158,28 @@ def cardview(request):
 
 @login_required
 def quiz(request):
-    s = 0
-    if 'score' in request.session:
-        s = request.session['score'] + 1
-    group_name = request.GET.get('name')
-    cards = card.objects.filter(group=group_name).order_by('?').first()
-    names = card.objects.values_list('name', flat=True).filter(group=group_name).order_by('?')[:3]
-    pictures = cardPicture.objects.filter(student=cards.student)
+    score = 0
+    group_name=request.GET.get('name')
+    cards = card.objects.filter(group=group_name).order_by('?')
+    names = card.objects.values_list('name', flat=True).filter(group=group_name).order_by('?')
+    pictures = cardPicture.objects.all()
+    request.session['cards'] = serializers.serialize("json",cards)
+    request.session['names'] = list(names)
+    request.session['pictures'] = serializers.serialize("json",pictures)
+    request.session['score'] = score
+    return render_to_response('readyquiz.html', {'cards':cards, 'pictures':pictures, 'names':names, 'score':score}, context_instance=RequestContext(request))
 
-    return render_to_response('quiz.html', {'cards':cards, 'pictures':pictures, 'names':names, 'score':s}, context_instance=RequestContext(request))
+def nextQuestion(request):
+    score = request.session.get('score')
+    cards = serializers.deserialize('json',request.session.get('cards'))
+    names = request.session.get('names')
+    pictures =  serializers.deserialize('json',request.session.get('pictures'))
+    for obj in cards:
+        cards = obj
+
+    return render_to_response('quiz.html', {'cards':cards, 'pictures':pictures, 'names':names, 'score':score}, context_instance=RequestContext(request))
+
+
 
 @login_required
 def SelfMarkQuiz(request):
@@ -196,7 +211,7 @@ def groupview(request):
 
 @login_required
 def addPicture(request):
-    c = request.GET.get('card')
+    c = request.POST.get('student')
     cards = card.objects.filter(student = c).first()
     if request.method == 'POST':
         pic_form = picForm(request.POST, request.FILES)

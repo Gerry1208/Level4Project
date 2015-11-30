@@ -9,8 +9,9 @@ urlpatterns = patterns('',
                         url(r'^create/$', views.create_cards, name='create'),
                         url(r'^groups/$', views.groupview, name='groupview'),
                         url(r'^cardview/$', views.cardview, name='cardview'),
-                        url(r'^quiz/$', views.quiz, name='quiz'),
+                        url(r'^readyquiz/$', views.quiz, name='readyquiz'),
                         url(r'^upload/$', views.upload, name='upload'),
                         url(r'^addpicture/$', views.addPicture, name='addpicture'),
-                        url(r'^selfmark/$', views.SelfMarkQuiz, name='selfmark')
+                        url(r'^selfmark/$', views.SelfMarkQuiz, name='selfmark'),
+                        url(r'^quiz/$', views.nextQuestion, name='quiz'),
                        )

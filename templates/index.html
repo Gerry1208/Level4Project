@@ -5,15 +5,18 @@
 
 {% block title %} Homepage {% endblock %}
 {% block body_block %}
-        Welcome to Flashcard app!
-        {% if user.is_authenticated %}
-            <h1>{{ user.username }}</h1>
-            <a href="/names/logout/">Logout</a>
-        {% else %}
-            <h1>Not logged in</h1>
-        {% endif %}
-        {% if request.user_agent.is_mobile %}
-            <strong> MOBILE </strong>
-        {% endif %}
-    </Strong>
+    <div class="container-fluid">
+        <div class="jumbotron">
+            <h1>Welcome to Names!</h1>
+            {% if user.is_authenticated %}
+                <h3>You are Logged in as {{ user.username }}</h3>
+                <br>
+                <a href="/names/logout/">Logout</a>
+            {% else %}
+                <h1>Not logged in</h1>
+                <br>
+                <a class="btn btn-primary btn-lg" href="{% url "login" %}" role="button">Login</a>
+            {% endif %}
+        </div>
+    </div>
 {% endblock %}
