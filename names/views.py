@@ -7,9 +7,7 @@ from django.contrib.auth.decorators import login_required
 from django.template import RequestContext
 from django.views.decorators.csrf import csrf_protect
 from names.models import groupModel, card, cardPicture
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-import pickle
-from django.core import serializers
+import random
 
 
 #form.cleaned_data for all?
@@ -158,26 +156,61 @@ def cardview(request):
 
 @login_required
 def quiz(request):
+
     score = 0
+    count = 0
     group_name=request.GET.get('name')
-    cards = card.objects.filter(group=group_name).order_by('?')
+    cards = card.objects.values_list(flat=True).filter(group=group_name).order_by('?')
     names = card.objects.values_list('name', flat=True).filter(group=group_name).order_by('?')
-    pictures = cardPicture.objects.all()
-    request.session['cards'] = serializers.serialize("json",cards)
-    request.session['names'] = list(names)
-    request.session['pictures'] = serializers.serialize("json",pictures)
+    pictures = cardPicture.objects.values_list(flat=True).order_by('?')
+
+    cards = list(cards)
+    pictures = list(pictures)
+    names = list(names)
+
+    request.session['cards'] = cards
+    request.session['names'] = names
+    request.session['pictures'] = pictures
     request.session['score'] = score
-    return render_to_response('readyquiz.html', {'cards':cards, 'pictures':pictures, 'names':names, 'score':score}, context_instance=RequestContext(request))
+    request.session['count'] = count
+
+    return render_to_response('readyquiz.html', {'cards':cards, 'pictures':pictures, 'names':names, 'score':score, 'count': count}, context_instance=RequestContext(request))
 
 def nextQuestion(request):
+    cards = request.session.get('cards')
     score = request.session.get('score')
-    cards = serializers.deserialize('json',request.session.get('cards'))
     names = request.session.get('names')
-    pictures =  serializers.deserialize('json',request.session.get('pictures'))
-    for obj in cards:
-        cards = obj
+    pictures = request.session.get('pictures')
+    count = request.session.get('count')
 
-    return render_to_response('quiz.html', {'cards':cards, 'pictures':pictures, 'names':names, 'score':score}, context_instance=RequestContext(request))
+    # Gets the correct question number
+    count += 1
+    request.session['count'] = count
+
+    # Gets the correct card and corresponding photo
+    cards = cards[count]
+    for p in pictures:
+        if p[1] == cards[1]:
+            pictures = p
+        else:
+            pictures = []
+
+    # Gets three random names to go along with it
+    rndNames = []
+    rndNames.append(cards[2])
+    while len(rndNames) < 4:
+        rndNames.append(random.choice(names))
+    random.shuffle(rndNames)
+
+
+
+
+
+
+
+
+
+    return render_to_response('quiz.html', {'cards':cards, 'pictures':pictures, 'names':rndNames, 'score':score, 'count':count}, context_instance=RequestContext(request))
 
 
 

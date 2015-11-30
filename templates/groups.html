@@ -6,10 +6,11 @@
 
 {#this needs to be pop up#}
 {% block body_block %}
-
+<div class="container">
     <div id="view">
         <form id="groups_form" method="post" action="/names/cardview/"
               enctype="multipart/form-data">
+
             {# this will display all different groups available #}
             {% if groups %}
                 {% for group in groups %}
@@ -27,5 +28,5 @@
 
         </form>
     </div>
-
+</div>
 {% endblock %}

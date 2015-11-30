@@ -7,44 +7,48 @@
 
 {% block body_block %}
     <div class="container">
-        {{ cards }}
+        Who is this student?: <br><img class="img-thumbnail" src="/media/{{ pictures.2}}"style="width:50%;height:50%;" /><br>
+        <br>
+        {% for name in names %}
+            <button type="button" onclick='myFunction(value)' class="btn btn btn-primary btn-block" value="{{ name }}" id="name"> {{ name }}</button>
+            <br>
+        {% endfor %}
     </div>
 
-
-
     <script type="text/javascript">
-        $(document).ready(function(){
-
-            $('#nextq').click(function(json_response) {
-
-                    counter = document.getElementById("nextq").value
-
-                    {% with counter=counter|add:1 %}
-                        $('#inner').load(function(){
-                            {{ counter|add:1 }}
-                        })
-                    {% endwith %}
-
-                    {% with score=score|add:1 %}
-                        score= {{ score }}
-                        alert(score)
-                    {% endwith %}
-
-{#                var cards = '{{ cards|safe }}';#}
-{#                var names = '{{ names }}';#}
-{#                var pictures = '{{ pictures|safe }}';#}
+        function myFunction(value){
+            alert(value)
+        }
+{#        $(document).ready(function(){#}
 {##}
-{#                $.ajax({#}
-{#                    type:"GET",#}
-{#                    data:{score:score, pictures:pictures, names:names, cards:cards},#}
-{#                    url:"{% url "quiz" %}?name=a",#}
-{#                    success:function(data){#}
-{#                        $('#question').html(data)#}
-{#                    }#}
-{#                })#}
+{#            $('#nextq').click(function(json_response) {#}
+{##}
+{#                counter = document.getElementById("nextq").value#}
+{##}
+{#                {% with counter=counter|add:1 %}#}
+{#                    $('#inner').load(function(){#}
+{#                        {{ counter|add:1 }}#}
+{#                    })#}
+{#                {% endwith %}#}
+{##}
+{#                {% with score=score|add:1 %}#}
+{#                    score= {{ score }}#}
+{#                            alert(score)#}
+{#                {% endwith %}#}
 
-            })
-            })
+                {#                var cards = '{{ cards|safe }}';#}
+                {#                var names = '{{ names }}';#}
+                {#                var pictures = '{{ pictures|safe }}';#}
+                {##}
+                {#                $.ajax({#}
+                {#                    type:"GET",#}
+                {#                    data:{score:score, pictures:pictures, names:names, cards:cards},#}
+                {#                    url:"{% url "quiz" %}?name=a",#}
+                {#                    success:function(data){#}
+                {#                        $('#question').html(data)#}
+                {#                    }#}
+                {#                })#}
+
     </script>
 {% endblock %}
 
