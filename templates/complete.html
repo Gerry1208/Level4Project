@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% load staticfiles %}
+
+{% block title %} Well done! {% endblock %}
+
+{% block body_block %}
+    <div class="container">
+        <div class="jumbotron">
+            <h1>Well done!</h1>
+            <h3>You got {{ score }} out of 10</h3>
+            <a class="btn btn-primary btn-lg" href="{% url "groupview" %}" role="button">Click here to go back to groups</a> <br> <br>
+        </div>
+    </div>
+{% endblock %}

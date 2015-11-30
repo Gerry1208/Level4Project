@@ -157,60 +157,55 @@ def cardview(request):
 @login_required
 def quiz(request):
 
-    score = 0
     count = 0
     group_name=request.GET.get('name')
     cards = card.objects.values_list(flat=True).filter(group=group_name).order_by('?')
-    names = card.objects.values_list('name', flat=True).filter(group=group_name).order_by('?')
     pictures = cardPicture.objects.values_list(flat=True).order_by('?')
 
     cards = list(cards)
     pictures = list(pictures)
-    names = list(names)
 
     request.session['cards'] = cards
-    request.session['names'] = names
     request.session['pictures'] = pictures
-    request.session['score'] = score
     request.session['count'] = count
 
-    return render_to_response('readyquiz.html', {'cards':cards, 'pictures':pictures, 'names':names, 'score':score, 'count': count}, context_instance=RequestContext(request))
+    return render_to_response('readyquiz.html', {'cards':cards, 'pictures':pictures, 'count': count}, context_instance=RequestContext(request))
 
 def nextQuestion(request):
     cards = request.session.get('cards')
-    score = request.session.get('score')
-    names = request.session.get('names')
     pictures = request.session.get('pictures')
     count = request.session.get('count')
 
-    # Gets the correct question number
-    count += 1
-    request.session['count'] = count
+    # Gets the correct question number, and finishes the quiz if 10 questions have been answered
+    if int(count) == 10:
+        score = request.GET.get('score')
+        render(request, "complete.html", {'score':score})
+    else:
+        count += 1
+        request.session['count'] = count
 
-    # Gets the correct card and corresponding photo
-    cards = cards[count]
-    for p in pictures:
-        if p[1] == cards[1]:
-            pictures = p
-        else:
-            pictures = []
+        # Gets three random names to go along with it
+        rndNames = []
+        while len(rndNames) < 3:
+            rndNames.append(random.choice(cards))
 
-    # Gets three random names to go along with it
-    rndNames = []
-    rndNames.append(cards[2])
-    while len(rndNames) < 4:
-        rndNames.append(random.choice(names))
-    random.shuffle(rndNames)
+        # Gets the correct card and corresponding photo
+        cards = cards[count]
+        for p in pictures:
+            if p[1] == cards[1]:
+                pictures = p
+            else:
+                pictures = []
 
+        # Adds in the correct answer, and shuffles
+        rndNames.append(cards)
+        random.shuffle(rndNames)
 
+        score = 0
+        if(request.GET.get('score')):
+            score = request.GET.get('score')
 
-
-
-
-
-
-
-    return render_to_response('quiz.html', {'cards':cards, 'pictures':pictures, 'names':rndNames, 'score':score, 'count':count}, context_instance=RequestContext(request))
+        return render_to_response('quiz.html', {'cards':cards, 'pictures':pictures, 'names':rndNames, 'score':score, 'count':count}, context_instance=RequestContext(request))
 
 
 
