@@ -7,39 +7,51 @@
 {# need a sidebar in here for multi choice, need to scroll to bottom currently #}
 
 {% block body_block %}
-    <form id="cards_form" method="post" action="/names/groupview/"
-          enctype="multipart/form-data">
-        {# this will display all different groups available #}
-        <div class="container">
-            {% if cards %}
-                {% for card in cards %}
+    {# this will display all different groups available #}
+    <div class="container-fluid">
+        <div class="row">
 
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
-                            <h3 class="panel-title">Student: {{ card.name }}</h3>
+
+            <div class="col-sm-3 col-md-2 sidebar">
+                <ul class="nav nav-sidebar">
+                    <li>
+                        <a href="{% url "readyquiz" %}?name={{ group }}">Multi Choice Quiz </a>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+                {% if cards %}
+                    {% for card in cards %}
+
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h3 class="panel-title">Student: {{ card.name }}</h3>
+                            </div>
+                            <div class="panel-body">
+                                Student Number: {{ card.student }}<br>
+                                Bio: {{ card.bio }}<br>
+                                {% if pictures %}
+                                    {% for p in pictures %}
+                                        {% ifequal p.student card %}
+                                            <br> <img src="{{ p.file.url }}"style="width:50%;height:50%;" /> <br>
+                                        {% endifequal %}
+                                    {% endfor %}
+                                {% else %}
+                                    <a href="{% url "addpicture" %}?card={{ card }}">add a picture for {{ card.name }}</a>
+                                {% endif %}
+                            </div>
                         </div>
-                        <div class="panel-body">
-                            Student Number: {{ card.student }}<br>
-                            Bio: {{ card.bio }}<br>
-                            {% if pictures %}
-                                {% for p in pictures %}
-                                    {% ifequal p.student card %}
-                                        <br> <img src="{{ p.file.url }}"style="width:50%;height:50%;" /> <br>
-                                    {% endifequal %}
-                                {% endfor %}
-                            {% else %}
-                                <a href="{% url "addpicture" %}?card={{ card }}">add a picture for {{ card.name }}</a>
-                            {% endif %}
-                        </div>
-                    </div>
-                {% endfor %}
-                <a class="btn btn-primary btn-lg btn-block" href="{% url "readyquiz" %}?name={{ group }}" role="button">Multi choice quiz</a>
-            {% else %}
-                <h2>There are no cards in this group</h2>
-                <br>
-                <a class="btn btn-primary btn-lg" href="{% url "create" %}" role="button">Click here to create one</a> <br> <br>
-                <a class="btn btn-primary btn-lg" href="{% url "upload" %}" role="button">Or click here to bulk upload a lot</a>
-            {% endif %}
+                    {% endfor %}
+                    <a class="btn btn-primary btn-lg btn-block" href="{% url "readyquiz" %}?name={{ group }}" role="button">Multi choice quiz</a>
+                {% else %}
+                    <h2>There are no cards in this group</h2>
+                    <br>
+                    <a class="btn btn-primary btn-lg" href="{% url "create" %}" role="button">Click here to create one</a> <br> <br>
+                    <a class="btn btn-primary btn-lg" href="{% url "upload" %}" role="button">Or click here to bulk upload a lot</a>
+                {% endif %}
+            </div>
         </div>
-    </form>
+    </div>
 {% endblock %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>

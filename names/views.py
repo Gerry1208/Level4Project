@@ -8,8 +8,9 @@ from django.template import RequestContext
 from django.views.decorators.csrf import csrf_protect
 from names.models import groupModel, card, cardPicture
 import random
+import logging
 
-
+logger = logging.getLogger(__name__)
 #form.cleaned_data for all?
 
 def index(request):
@@ -177,46 +178,57 @@ def nextQuestion(request):
     count = request.session.get('count')
 
     # Gets the correct question number, and finishes the quiz if 10 questions have been answered
-    if int(count) == 10:
+
+    count += 1
+    request.session['count'] = count
+
+    # Gets three random names to go along with it
+    rndNames = []
+    while len(rndNames) < 3:
+        rndNames.append(random.choice(cards))
+
+    # Gets the correct card and corresponding photo
+    cards = cards[count]
+    for p in pictures:
+        if p[1] == cards[1]:
+            pictures = p
+        else:
+            pictures = []
+
+    # Adds in the correct answer, and shuffles
+    rndNames.append(cards)
+    random.shuffle(rndNames)
+
+    score = 0
+    if(request.GET.get('score')):
+        score = request.GET.get('score')
+
+    return render_to_response('quiz.html', {'cards':cards, 'pictures':pictures, 'names':rndNames, 'score':score, 'count':count}, context_instance=RequestContext(request))
+
+
+
+@login_required
+def SelfMarkQuiz(request):
+    cards = request.session.get('cards')
+    pictures = request.session.get('pictures')
+    count = request.session.get('count')
+
+    # Gets the correct question number, and finishes the quiz if 10 questions have been answered
+    if count == 10:
         score = request.GET.get('score')
         render(request, "complete.html", {'score':score})
     else:
         count += 1
         request.session['count'] = count
 
-        # Gets three random names to go along with it
-        rndNames = []
-        while len(rndNames) < 3:
-            rndNames.append(random.choice(cards))
+    cards = cards[count]
+    for p in pictures:
+        if p[1] == cards[1]:
+            pictures = p
+        else:
+            pictures = []
 
-        # Gets the correct card and corresponding photo
-        cards = cards[count]
-        for p in pictures:
-            if p[1] == cards[1]:
-                pictures = p
-            else:
-                pictures = []
-
-        # Adds in the correct answer, and shuffles
-        rndNames.append(cards)
-        random.shuffle(rndNames)
-
-        score = 0
-        if(request.GET.get('score')):
-            score = request.GET.get('score')
-
-        return render_to_response('quiz.html', {'cards':cards, 'pictures':pictures, 'names':rndNames, 'score':score, 'count':count}, context_instance=RequestContext(request))
-
-
-
-@login_required
-def SelfMarkQuiz(request):
-    group_name = request.GET.get('name')
-    self_cards = card.objects.filter(group=group_name).order_by('?')
-    pictures = []
-    for c in self_cards:
-        pictures += cardPicture.objects.filter(student = c)
-    return render_to_response('selfmark.html', {'self_cards':self_cards, 'pictures':pictures}, context_instance=RequestContext(request))
+    return render_to_response('selfmark.html', {'cards':cards, 'pictures':pictures}, context_instance=RequestContext(request))
 
 @login_required
 def user_logout(request):
