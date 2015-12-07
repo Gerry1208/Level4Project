@@ -15,7 +15,10 @@
             <div class="col-sm-3 col-md-2 sidebar">
                 <ul class="nav nav-sidebar">
                     <li>
-                        <a href="{% url "readyquiz" %}?name={{ group }}">Multi Choice Quiz </a>
+                        <a href="{% url "readyquiz" %}?name={{ group }}&quiz=multi">Multi choice quiz </a>
+                    </li>
+                    <li>
+                        <a href="{% url "readyquiz" %}?name={{ group }}&quiz=self">Self marked quiz</a>
                     </li>
                 </ul>
             </div>
@@ -43,7 +46,8 @@
                             </div>
                         </div>
                     {% endfor %}
-                    <a class="btn btn-primary btn-lg btn-block" href="{% url "readyquiz" %}?name={{ group }}" role="button">Multi choice quiz</a>
+                    <a class="btn btn-primary btn-lg btn-block" href="{% url "readyquiz" %}?name={{ group }}&quiz=multi" role="button">Multi choice quiz</a>
+                    <a class="btn btn-primary btn-lg btn-block" href="{% url "readyquiz" %}?name={{ group }}&quiz=self" role="button">Self marked quiz</a>
                 {% else %}
                     <h2>There are no cards in this group</h2>
                     <br>
@@ -54,4 +58,3 @@
         </div>
     </div>
 {% endblock %}
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>

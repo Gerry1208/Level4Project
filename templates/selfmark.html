@@ -2,36 +2,57 @@
 
 {% load staticfiles %}
 
-{%  block title %} Mark yourself! {% endblock %}
+{% block title %} Mark yourself! {% endblock %}
 
 {% block body_block %}
-    {% if self_cards %}
-        {% for c in self_cards %}
-            {% for p in pictures %}
-                {% ifequal p.student c %}
-                    Who is This:<br><img src="{{ p.file.url }}"style="width:50%;height:50%;" />
-                    <p hidden>name = {{ c.name }}</p>
-                    <button id="showname">Show Name</button><br>
-                    <button id="correct" hidden> Correct </button>
-                    <button id="wrong" hidden> Wrong </button>
-                {% endifequal %}
-            {% endfor %}
-        {% endfor %}
-    {% endif %}
+    <div class="container">
+        <div id="page">
+            {% ifequal count 10%}
+                <br>
+                <a class="btn btn-primary btn-lg btn-block" href="{% url "complete" %}?score={{ score }}" role="button">Finish!</a>
+            {% else %}
+                {% if cards %}
+                    Who is this student?: <br><img id="picture" class="img-thumbnail" src="/media/{{ pictures.2}}"style="width:50%;height:50%;" /><br>
+                    <label hidden id="name">{{ cards.2 }}</label>
+                    <button type="button" onclick='myFunction()' class="btn btn btn-primary" id="button">Click to reveal name</button> <br>
+                    <button type="button" onclick='answeredq(value)' class="btn btn-sm btn-success" value="correct" id="correct"><span class="glyphicon glyphicon-thumbs-up"></span></button>
+                    <button type="button" onclick='answeredq(value)' class="btn btn-sm btn-danger" value="wrong" id="wrong"><span class="glyphicon glyphicon-thumbs-down"></span></button>
+                {% endif %}
+            {% endifequal %}
+        </div>
+    </div>
 
     <script>
-    var score = 0;
-    $(document).ready(function(){
-            $('#showname').click(function(json_response){
-                $("p").show();
-                $('#correct').show();
-                $('#wrong').show();
-                $('#showname').hide();
-                });
-            $('#correct').click(function(json_response){
-                score ++;
-                alert(score)
-                })
-    });
+        $(document).ready(function(){
+
+            $('#correct').hide()
+            $('#wrong').hide()
+        })
+        function myFunction(){
+            $("#name").show()
+            $("#button").hide()
+            $("#correct").show()
+            $('#wrong').show()
+        }
+
+        function answeredq(value) {
+            score = {{ score }}
+            if (value == "correct") {
+                score++
+            }
+
+
+
+        $.ajax({
+            url:'{% url "selfmark" %}',
+            type:"GET",
+            data:{score:score},
+            success:function(data){
+                $("#page").html(data)
+            }
+        })
+        }
+
     </script>
+
 {% endblock %}

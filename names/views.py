@@ -160,6 +160,7 @@ def quiz(request):
 
     count = 0
     group_name=request.GET.get('name')
+    quiz_type=request.GET.get('quiz')
     cards = card.objects.values_list(flat=True).filter(group=group_name).order_by('?')
     pictures = cardPicture.objects.values_list(flat=True).order_by('?')
 
@@ -170,7 +171,7 @@ def quiz(request):
     request.session['pictures'] = pictures
     request.session['count'] = count
 
-    return render_to_response('readyquiz.html', {'cards':cards, 'pictures':pictures, 'count': count}, context_instance=RequestContext(request))
+    return render_to_response('readyquiz.html', {'cards':cards, 'pictures':pictures, 'count': count, 'quiz_type':quiz_type}, context_instance=RequestContext(request))
 
 def nextQuestion(request):
     cards = request.session.get('cards')
@@ -214,12 +215,8 @@ def SelfMarkQuiz(request):
     count = request.session.get('count')
 
     # Gets the correct question number, and finishes the quiz if 10 questions have been answered
-    if count == 10:
-        score = request.GET.get('score')
-        render(request, "complete.html", {'score':score})
-    else:
-        count += 1
-        request.session['count'] = count
+    count += 1
+    request.session['count'] = count
 
     cards = cards[count]
     for p in pictures:
@@ -228,7 +225,11 @@ def SelfMarkQuiz(request):
         else:
             pictures = []
 
-    return render_to_response('selfmark.html', {'cards':cards, 'pictures':pictures}, context_instance=RequestContext(request))
+    score = 0
+    if(request.GET.get('score')):
+        score = request.GET.get('score')
+
+    return render_to_response('selfmark.html', {'cards':cards, 'pictures':pictures, 'score':score, 'count':count}, context_instance=RequestContext(request))
 
 @login_required
 def user_logout(request):
@@ -256,11 +257,18 @@ def addPicture(request):
     if request.method == 'POST':
         pic_form = picForm(request.POST, request.FILES)
         if pic_form.is_valid():
-            pic = pic_form.save(commit=False)
-            pic.student = cards
-            pic.file = request.FILES['file']
-            pic.save()
+            file_list = request.FILES.getlist('file')
+            for f in file_list:
+                pic = pic_form.save(commit=False)
+                pic.student = cards
+                pic.file = f
+                pic.save()
     else:
         pic_form = picForm()
 
     return render_to_response('addpicture.html', {'pic_form':pic_form, 'card':cards}, context_instance=RequestContext(request))
+
+@login_required
+def complete(request):
+    score = request.GET.get('score')
+    return render_to_response('complete.html', {'score':score}, context_instance=RequestContext(request))

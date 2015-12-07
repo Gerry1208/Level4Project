@@ -6,22 +6,20 @@
 
 {% block body_block %}
     <div class="container">
-    <br>
+        <br>
         {% ifequal count 10%}
-            <a class="btn btn-primary btn-lg btn-block" href="/names/complete/" role="button">Finish!</a>
+            <br>
+            <a class="btn btn-primary btn-lg btn-block" href="{% url "complete" %}?score={{ score }}" role="button">Finish!</a>
         {% else %}
         <div id="page">
             <div id="question" data-value="{{ cards.1 }}">
-                {{ count }}
                 Who is this student?: <br><img class="img-thumbnail" src="/media/{{ pictures.2}}"style="width:50%;height:50%;" /><br>
                 <br>
-                <ul>
+
                     {% for name in names %}
-                        <li>
                         <button type="button" onclick='myFunction(value)' class="btn btn btn-primary btn-block" value="{{ name.1 }}" id="name"> {{ name.2 }}</button>
-                        </li>
+
                     {% endfor %}
-                </ul>
 
             </div>
         </div>

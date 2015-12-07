@@ -5,21 +5,63 @@
 {% block title %} Add picture {% endblock %}
 
 {% block body_block %}
-    <form id="cards_form" method="post" action="{% url "addpicture" %}"
-          enctype="multipart/form-data">
-        {% csrf_token %}
-        <div class="container">
-            <div class="page-header">
-                <h2>Add a picture to a card</h2>
-            </div>
-            <form class="form-group">
-                <input name="student" type="text" placeholder="Student Number" class="form-control">
-                <label for="id_file">Picture:</label>
-                <input id="id_file" name="file" type="file">
-                <br>
-                <button type="submit" class="btn btn-lg btn-primary btn-block">Upload</button>
-            </form>
-        </div>
+{#    <form id="cards_form" method="post" action="{% url "addpicture" %}"#}
+{#          enctype="multipart/form-data">#}
+{#        {% csrf_token %}#}
+{#        <div class="container">#}
+{#            <div class="page-header">#}
+{#                <h2>Add a picture to a card</h2>#}
+{#            </div>#}
+{#            <form class="form-group">#}
+{#                <input name="student" type="text" placeholder="Student Number" class="form-control">#}
+{#                <label for="id_file">Picture:</label>#}
+{#                <input id="id_file" name="file" type="file">#}
+{#                <br>#}
+{#                <button type="submit" class="btn btn-lg btn-primary btn-block">Upload</button>#}
+{#            </form>#}
+{#        </div>#}
+{#    </form>#}
 
-    </form>
+    <div class="container">
+        <form id="file_upload" action="{% url "addpicture" %}" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+
+
+            <noscript>
+                "<input type="hidden" name="redirect" value="{% url "index" %}">"
+            </noscript>
+            <input name="student" type="text" placeholder="Student Number" class="form-control">
+            <div class="row fileupload-buttonbar">
+                <div class="col-lg-7">
+                    <span class="btn btn-success fileinput-button">
+                        <i class="glyphicon glyphicon-plus"></i>
+                        <span>Add image(s)</span>
+                        <input type="file" name="file" id="id_file" multiple>
+                    </span>
+                    <button type="submit" class="btn btn-primary start">
+                        <i class="glyphicon glyphicon-upload"></i>
+                        <span>Start upload</span>
+                    </button>
+                    <button type="reset" class="btn btn-warning cancel">
+                        <i class="glyphicon glyphicon-ban-circle"></i>
+                        <span>Cancel</span>
+                    </button>
+                    <button type="button" class="btn btn-danger delete">
+                        <i class="glyphicon glyphicon-trash"></i>
+                        <span>Delete</span>
+                    </button>
+                    <span class="fileupload-process"></span>
+                </div>
+                <div class="col-lg-5 fileupload-process fade">
+                    <div class="progress progress-striped active" role="progressbar"aria-valuemin="0" aria-valuemax="100">
+                        <div class="progress-extended">&nbsp;</div>
+                    </div>
+                </div>
+            </div>
+            <table role="presentation" class="table table-striped">
+                <tbody class="files"></tbody>
+            </table>
+        </form>
+        <br>
+    </div>
 {% endblock %}

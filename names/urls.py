@@ -15,5 +15,5 @@ urlpatterns = patterns('',
                         url(r'^addpicture/$', views.addPicture, name='addpicture'),
                         url(r'^selfmark/$', views.SelfMarkQuiz, name='selfmark'),
                         url(r'^quiz/$', views.nextQuestion, name='quiz'),
-                        url(r'^complete/$', TemplateView.as_view(template_name='complete.html'))
+                        url(r'^complete/$', views.complete, name='complete')
                        )
