@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% load staticfiles %}
+
+{%  block title %} Change your password {% endblock %}
+
+{# need a sidebar in here for multi choice, need to scroll to bottom currently #}
+
+{% block body_block %}
+    <br>
+    <div class="container">
+        <form method="post" action="/names/changepass/">
+            {% csrf_token %}
+                {{ form.as_p}}
+            <button type="submit" class="btn btn-lg btn-primary btn-block">Change</button>
+        </form>
+    </div>
+{% endblock %}

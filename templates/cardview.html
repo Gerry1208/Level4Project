@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 
 {% load staticfiles %}
+{% load user_agents %}
 
 {%  block title %} Group {{ group.group_name }} {% endblock %}
 
@@ -11,19 +12,31 @@
     <div class="container-fluid">
         <div class="row">
 
+        {% if not request|is_mobile %}
+            <div class="col-sm-3 col-md-2">
+                <div id="sidebr" class="affix-top" data-spy="affix">
 
-            <div class="col-sm-3 col-md-2 sidebar">
                 <ul class="nav nav-sidebar">
+                    <li>
+                        <a>Group {{ group }}</a>
+                    </li>
+                    {% if cards %}
                     <li>
                         <a href="{% url "readyquiz" %}?name={{ group }}&quiz=multi">Multi choice quiz </a>
                     </li>
                     <li>
                         <a href="{% url "readyquiz" %}?name={{ group }}&quiz=self">Self marked quiz</a>
                     </li>
+                    {% endif %}
                 </ul>
+                </div>
             </div>
+        {% endif %}
 
             <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+                {% if request|is_mobile %}
+                <h3>Group {{ group }}</h3>
+                {% endif %}
                 {% if cards %}
                     {% for card in cards %}
 
@@ -33,15 +46,16 @@
                             </div>
                             <div class="panel-body">
                                 Student Number: {{ card.student }}<br>
-                                Bio: {{ card.bio }}<br>
                                 {% if pictures %}
                                     {% for p in pictures %}
                                         {% ifequal p.student card %}
-                                            <br> <img src="{{ p.file.url }}"style="width:50%;height:50%;" /> <br>
+                                            <br> <img src="{{ p.file.url }}"style="width:25%;height:25%;" /> <br>
                                         {% endifequal %}
                                     {% endfor %}
                                 {% else %}
+                                    {% if request.user.is_superuser %}
                                     <a href="{% url "addpicture" %}?card={{ card }}">add a picture for {{ card.name }}</a>
+                                    {% endif %}
                                 {% endif %}
                             </div>
                         </div>
@@ -51,8 +65,13 @@
                 {% else %}
                     <h2>There are no cards in this group</h2>
                     <br>
+                    {% if request.user.is_superuser %}
                     <a class="btn btn-primary btn-lg" href="{% url "create" %}" role="button">Click here to create one</a> <br> <br>
                     <a class="btn btn-primary btn-lg" href="{% url "upload" %}" role="button">Or click here to bulk upload a lot</a>
+                    {% else %}
+                    <h3>Please contact 2027289d@student.gla.ac.uk if this is incorrect, Thank you</h3>
+                    {% endif %}
+
                 {% endif %}
             </div>
         </div>

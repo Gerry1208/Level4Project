@@ -1,7 +1,9 @@
 from lib2to3.fixes.fix_input import context
 from names.forms import UserForm, UserProfileForm, cardForm, groupsForm, picForm, bulkUpload
-from django.shortcuts import render, render_to_response
-from django.contrib.auth import authenticate, login, logout
+from django.shortcuts import render, render_to_response, redirect
+from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
+from django.contrib.auth.forms import PasswordChangeForm
+from django.contrib import messages
 from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.template import RequestContext
@@ -12,6 +14,23 @@ import logging
 
 logger = logging.getLogger(__name__)
 #form.cleaned_data for all?
+
+@login_required
+def change_password(request):
+    if request.method == 'POST':
+        form = PasswordChangeForm(request.user, data=request.POST)
+        if form.is_valid():
+            form.save()
+            update_session_auth_hash(request, form.user)
+            messages.success(request, "Password changed.")
+            return redirect("/names/index")
+    else:
+        form = PasswordChangeForm(request.user)
+    data = {
+        'form': form
+    }
+    return render(request, "changepass.html", data)
+
 
 def index(request):
     return render(request, 'index.html', {})
@@ -158,7 +177,7 @@ def cardview(request):
 @login_required
 def quiz(request):
 
-    count = 0
+    count = -1
     group_name=request.GET.get('name')
     quiz_type=request.GET.get('quiz')
     cards = card.objects.values_list(flat=True).filter(group=group_name).order_by('?')
@@ -178,33 +197,47 @@ def nextQuestion(request):
     pictures = request.session.get('pictures')
     count = request.session.get('count')
 
-    # Gets the correct question number, and finishes the quiz if 10 questions have been answered
-
-    count += 1
-    request.session['count'] = count
-
-    # Gets three random names to go along with it
-    rndNames = []
-    while len(rndNames) < 3:
-        rndNames.append(random.choice(cards))
-
-    # Gets the correct card and corresponding photo
-    cards = cards[count]
-    for p in pictures:
-        if p[1] == cards[1]:
-            pictures = p
-        else:
-            pictures = []
-
-    # Adds in the correct answer, and shuffles
-    rndNames.append(cards)
-    random.shuffle(rndNames)
-
     score = 0
     if(request.GET.get('score')):
         score = request.GET.get('score')
 
-    return render_to_response('quiz.html', {'cards':cards, 'pictures':pictures, 'names':rndNames, 'score':score, 'count':count}, context_instance=RequestContext(request))
+    # Gets the correct question number, and finishes the quiz if 10 questions have been answered
+    if len(cards) < 10:
+        if count==(len(cards)-1):
+            count = 10
+
+    if count == 10:
+        return render_to_response('selfmark.html', {'cards':cards, 'pictures':pictures, 'score':score, 'count':count}, context_instance=RequestContext(request))
+
+
+    count += 1
+    request.session['count'] = count
+
+
+
+    # Gets the correct card and corresponding photo
+    card = cards[count]
+    for p in pictures:
+        if p[1] == card[0]:
+            pictures = p
+
+    if len(pictures) > 1:
+           pictures = []
+
+    # Gets three random names to go along with it
+    # Adds in the correct answer, and shuffles
+    rndNames = []
+    rndNames.append(card)
+    while len(rndNames) < 4:
+        choice = random.choice(cards)
+        if choice not in rndNames:
+            rndNames.append(choice)
+
+    random.shuffle(rndNames)
+
+
+
+    return render_to_response('quiz.html', {'cards':card, 'pictures':pictures, 'names':rndNames, 'score':score, 'count':count}, context_instance=RequestContext(request))
 
 
 
@@ -214,20 +247,29 @@ def SelfMarkQuiz(request):
     pictures = request.session.get('pictures')
     count = request.session.get('count')
 
+    score = 0
+    if(request.GET.get('score')):
+        score = request.GET.get('score')
+
+    if len(cards) < 10:
+        if count==(len(cards)-1):
+            count = 10
+
+    if count == 10:
+        return render_to_response('selfmark.html', {'cards':cards, 'pictures':pictures, 'score':score, 'count':count}, context_instance=RequestContext(request))
+
     # Gets the correct question number, and finishes the quiz if 10 questions have been answered
     count += 1
     request.session['count'] = count
 
     cards = cards[count]
     for p in pictures:
-        if p[1] == cards[1]:
+        if p[1] == cards[0]:
             pictures = p
-        else:
+
+    if len(pictures) > 1:
             pictures = []
 
-    score = 0
-    if(request.GET.get('score')):
-        score = request.GET.get('score')
 
     return render_to_response('selfmark.html', {'cards':cards, 'pictures':pictures, 'score':score, 'count':count}, context_instance=RequestContext(request))
 

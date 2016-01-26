@@ -15,5 +15,7 @@ urlpatterns = patterns('',
                         url(r'^addpicture/$', views.addPicture, name='addpicture'),
                         url(r'^selfmark/$', views.SelfMarkQuiz, name='selfmark'),
                         url(r'^quiz/$', views.nextQuestion, name='quiz'),
-                        url(r'^complete/$', views.complete, name='complete')
+                        url(r'^complete/$', views.complete, name='complete'),
+                        url(r'^changepass/$', views.change_password, name='changepass'),
+                        url(r'^$', views.index, name='home'),
                        )
