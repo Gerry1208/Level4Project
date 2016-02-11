@@ -6,6 +6,7 @@
 {% block title %} Quiz {% endblock %}
 
 {% block body_block %}
+    <div id="entire">
     <div class="container">
         <br>
         {% ifequal count 10%}
@@ -33,6 +34,7 @@
         </div>
     {% endifequal %}
     </div>
+    </div>
 
     <script>
 
@@ -49,14 +51,13 @@
 
 
             }
-
-
             $.ajax({
                 url:'{% url "quiz" %}',
                 type:"GET",
                 data:{score:score},
+                datatype: 'json',
                 success:function(data){
-                    $("#page").html(data)
+                    $("#entire").html(data)
                 }
             })
 

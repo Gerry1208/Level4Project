@@ -2,6 +2,7 @@ from django import forms
 from django.contrib.auth.models import User
 from names.models import UserProfile, groupModel, card, cardPicture
 import csv
+from multiupload.fields import MultiFileField
 #PLACEHOLDERS TO ADD FOR ALL
 
 
@@ -49,4 +50,5 @@ class bulkUpload(forms.Form):
             input_data.group = group_input
             input_data.save()
 
-
+class pictureForm(forms.Form):
+    files = MultiFileField(min_num=1)

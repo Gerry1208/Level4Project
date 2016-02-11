@@ -9,6 +9,9 @@ from django.contrib.auth.decorators import login_required
 from django.template import RequestContext
 from django.views.decorators.csrf import csrf_protect
 from names.models import groupModel, card, cardPicture
+from django.views.generic.edit import FormView
+from .forms import pictureForm
+from .models import cardPicture
 import random
 import logging
 
@@ -207,6 +210,7 @@ def nextQuestion(request):
             count = 10
 
     if count == 10:
+        score = (score/count) * 100
         return render_to_response('selfmark.html', {'cards':cards, 'pictures':pictures, 'score':score, 'count':count}, context_instance=RequestContext(request))
 
 
@@ -292,23 +296,19 @@ def groupview(request):
     group_form = groupsForm()
     return render_to_response('groups.html', {'groups':groups, 'group_form':group_form}, context_instance=RequestContext(request))
 
-@login_required
-def addPicture(request):
-    c = request.POST.get('student')
-    cards = card.objects.filter(student = c).first()
-    if request.method == 'POST':
-        pic_form = picForm(request.POST, request.FILES)
-        if pic_form.is_valid():
-            file_list = request.FILES.getlist('file')
-            for f in file_list:
-                pic = pic_form.save(commit=False)
-                pic.student = cards
-                pic.file = f
-                pic.save()
-    else:
-        pic_form = picForm()
 
-    return render_to_response('addpicture.html', {'pic_form':pic_form, 'card':cards}, context_instance=RequestContext(request))
+class addPicture(FormView):
+    template_name='addpicture.html'
+    form_class = pictureForm
+    success_url = '/names/addpicture/'
+
+    def form_valid(self, form):
+        for each in form.cleaned_data['files']:
+            studArray= each.name.split(".")
+            studName=studArray[0]
+            studCard = card.objects.filter(student=studName).first()
+            cardPicture.objects.create(file=each, student=studCard)
+        return super(addPicture,self).form_valid(form)
 
 @login_required
 def complete(request):

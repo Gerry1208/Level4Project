@@ -12,7 +12,7 @@ class UserProfile(models.Model):
 #This Model is for groups, and is related to user by a many to many relationship
 class groupModel(models.Model):
     user = models.ManyToManyField(User)
-    group_name = models.CharField(max_length=10, unique=True, primary_key=True)
+    group_name = models.CharField(max_length=40, unique=True, primary_key=True)
 
     def __unicode__(self):
         return self.group_name
@@ -30,7 +30,7 @@ class card(models.Model):
 #This Model is for pictures for each card, related to card by a many to one relationship
 class cardPicture(models.Model):
     student = models.ForeignKey(card)
-    file = models.ImageField(upload_to='card_images', null = True)
+    file = models.FileField(upload_to='card_images', null = True)
 
     def __unicode__(self):
         return self.student.student
