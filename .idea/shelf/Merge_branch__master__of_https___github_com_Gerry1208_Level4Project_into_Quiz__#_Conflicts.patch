@@ -1,0 +1,16 @@
+Index: .idea/misc.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- .idea/misc.xml	(date 1452791676000)
++++ .idea/misc.xml	(revision )
+@@ -11,4 +11,7 @@
+     <ConfirmationsSetting value="0" id="Remove" />
+   </component>
+   <component name="ProjectRootManager" version="2" project-jdk-name="Python 2.7.6 (C:\Python27\python.exe) (9)" project-jdk-type="Python SDK" />
++  <component name="SvnBranchConfigurationManager">
++    <option name="mySupportsUserInfoFilter" value="true" />
++  </component>
+ </project>
+\ No newline at end of file

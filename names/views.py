@@ -302,9 +302,8 @@ def create_cards(request):
             card = card_form.save()
             card.save()
 
-            pic = pic_form.save(commit=False)
+            pic = cardPicture(file = request.FILES['file'])
             pic.student = card
-            pic.file = request.FILES['file']
             pic.save()
     else:
         card_form = cardForm()
