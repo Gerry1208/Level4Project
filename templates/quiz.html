@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+
+{% load staticfiles %}
+{% load user_agents %}
+
+{% block title %} Quiz {% endblock %}
+
+{% block body_block %}
+    <div id="entire">
+    <div class="container">
+        <br>
+        {% ifequal count 10%}
+            <br>
+            <a class="btn btn-primary btn-block" href="{% url "complete" %}?score={{ score }}" role="button">Finish!</a>
+        {% else %}
+            {% if not request|is_mobile %}
+                <div id="page" class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+            {% endif %}
+            {% if request|is_mobile %}
+                <div id="page">
+            {% endif %}
+
+            <div id="question" data-value="{{ cards.0 }}">
+                Who is this student?: <br><img class="img-thumbnail" src="/media/card_images/{{ cards.0 }}.jpg"style="width:25%;height:25%;" /><br>
+                <br>
+
+                    {% for name in names %}
+                        <button type="button" onclick='myFunction(value)' class="btn btn btn-primary btn-block" value="{{ name.0 }}" id="{{ name.0 }}"> {{ name.1 }}</button>
+                    {% endfor %}
+
+            </div>
+        <br><br><br>
+        <a class="btn btn-primary btn-sm" href="{% url "groupview" %}" role="button">Quit and Return to groups</a>
+        </div>
+    {% endifequal %}
+    </div>
+    </div>
+
+    <script>
+
+        function myFunction(value){
+            var card = $('#question').data('value');
+            var score = {{ score }}
+            document.getElementById(card).className = "btn btn btn-success btn-block"
+            if( card == value){
+                score++
+            }
+            else{
+                document.getElementById(value).className="btn btn btn-danger btn-block"
+                {# $(wrong_ number).show() #}
+
+
+            }
+            $.ajax({
+                url:'{% url "quiz" %}',
+                type:"GET",
+                data:{score:score},
+                datatype: 'json',
+                success:function(data){
+                    $("#entire").html(data)
+                }
+            })
+
+        }
+
+    </script>
+{% endblock %}

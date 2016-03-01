@@ -1,0 +1,30 @@
+
+{% extends 'base.html' %}
+
+{% load staticfiles %}
+
+{% block title %} Register an Account {% endblock %}
+
+{% block body_block %}
+    <div class="container">
+        {% if registered %}
+        <strong>Thank you for registering!</strong>
+        <a class="btn btn-primary btn-lg" href="/names/index/" role="button">Click here to go to the homepage</a>
+
+        {% else %}
+
+        <form id="user_form" method="post" action="/names/register/"
+                enctype="multipart/form-data">
+
+            {% csrf_token %}
+            <h2 class="form-signin-heading">Registration</h2>
+            <p><label for="id_username"></label> <input id="id_username" class="form-control" maxlength="30" name="username" type="text" placeholder="Username" required autofocus> <span class="helptext">Required. 30 characters or fewer. Letters, digits and @/./+/-/_ only.</span></p>
+            <p><label for="id_email"></label> <input id="id_email" class="form-control" maxlength="75" name="email" type="email" placeholder="Email address"required></p>
+            <p><label for="id_password"></label> <input id="id_password" class="form-control" name="password" type="password" placeholder="password" required></p>
+            <p><label for="id_picture">Picture:</label> <input id="id_picture" name="picture" type="file"></p>
+
+            <button type="submit" class="btn btn-lg btn-primary btn-block">Register</button>
+        </form>
+        {% endif %}
+    </div>
+{% endblock %}

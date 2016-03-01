@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% load staticfiles %}
+
+{% block title %} Well done! {% endblock %}
+
+{% block body_block %}
+    <div class="container">
+        <br>
+        <div class="jumbotron">
+            {% if score <= 3 %}
+                <h1>You can do better!</h1>#
+            {% elif score > 3 and score <= 6  %}
+                <h1>Keep going!</h1>
+            {% elif score > 6 and score < 10 %}
+                <h1>So close!</h1>
+            {% elif score == 10 %}
+                <h1>Perfect! Well done!</h1>
+            {% endif %}
+            <h3>You scored {{ score }}</h3>
+            <a class="btn btn-primary btn-lg" href="{% url "groupview" %}" role="button">Click here to go back to groups</a> <br> <br>
+        </div>
+    </div>
+{% endblock %}

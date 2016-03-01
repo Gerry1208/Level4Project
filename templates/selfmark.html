@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+
+{% load staticfiles %}
+{% load user_agents %}
+
+{% block title %} Mark yourself! {% endblock %}
+
+{% block body_block %}
+    <div class="container">
+            {% if not request|is_mobile %}
+                <div id="page" class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+            {% endif %}
+            {% if request|is_mobile %}
+                <div id="page">
+            {% endif %}
+            {% ifequal count 10%}
+                <br>
+                <a class="btn btn-primary btn-block" href="{% url "complete" %}?score={{ score }}" role="button">Finish!</a>
+            {% else %}
+                {% if cards %}
+                    Who is this student?: <br><img id="picture" class="img-thumbnail" src="/media/card_images/{{ cards.0 }}.jpg"style="width:25%;height:25%;" /><br>
+                    <label hidden id="name">{{ cards.1 }}</label>
+                    <button type="button" onclick='myFunction()' class="btn btn btn-primary" id="button">Click to reveal name</button> <br>
+                    <button type="button" onclick='answeredq(value)' class="btn btn-sm btn-success" value="correct" id="correct"><span class="glyphicon glyphicon-thumbs-up"></span></button>
+                    <button type="button" onclick='answeredq(value)' class="btn btn-sm btn-danger" value="wrong" id="wrong"><span class="glyphicon glyphicon-thumbs-down"></span></button>
+                    <br><br><br>
+                    <a class="btn btn-primary btn-sm" href="{% url "groupview" %}" role="button">Quit and Return to groups</a>
+                {% endif %}
+            {% endifequal %}
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function(){
+
+            $('#correct').hide()
+            $('#wrong').hide()
+        })
+        function myFunction(){
+            $("#name").show()
+            $("#button").hide()
+            $("#correct").show()
+            $('#wrong').show()
+        }
+
+        function answeredq(value) {
+            score = {{ score }}
+            if (value == "correct") {
+                score++
+            }
+
+
+
+        $.ajax({
+            url:'{% url "selfmark" %}',
+            type:"GET",
+            data:{score:score},
+            success:function(data){
+                $("#page").html(data)
+            }
+        })
+        }
+
+    </script>
+
+{% endblock %}

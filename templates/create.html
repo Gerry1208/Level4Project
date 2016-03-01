@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+
+{% load staticfiles %}
+
+{%  block title %} Create a card {% endblock %}
+
+
+
+{% block body_block %}
+
+    <script>
+        $(function() {
+            var availableGroups = [];
+            var n = 0;
+            {% for i in groups %}
+                availableGroups[n] = "{{ i }}";
+                n++;
+            {% endfor %}
+            $( "#id_group" ).autocomplete({
+                source: availableGroups
+            });
+        });
+        Dropzone.options.cardForm = {
+            paramName:"file",
+            clickable:"#my-dropzone",
+            previewsContainer:"#dropzonePreview",
+            autoProcessQueue: false,
+            parallelUploads: 100,
+            maxFiles: 100,
+
+
+        }
+    </script>
+
+    <div class="container">
+
+        <form id="card_form" method="post" action="/names/create/" class="dropzone"
+              enctype="multipart/form-data">
+
+            {% csrf_token %}
+            <div class="row">
+                <div class="col-lg-6">
+                    <h2>Enter person details:</h2>
+                    <div class="ui-widget">
+                        <input class="form-control" id="id_name" maxlength="100" name="name" type="text" placeholder="Name?"/><br>
+                        <input class="form-control" id="id_bio" maxlength="1000" name="bio" type="text" placeholder="Some notes on the person?" /><br>
+                        <input class="form-control" id="id_group" name = "group" placeholder="Search groups...">
+                    </div>
+
+
+                </div>
+
+                <div class="col-lg-6 dz-message dz-clickable" id="my-dropzone">
+                    Click here, or drag an image...
+                    <div class="dz-preview dz-processing dz-success dz-complete dz-image-preview dz-file-preview" id="dropzonePreview">
+                    </div>
+                </div>
+                <br>
+                <br>
+                <button type="submit" id="submit" class="col-lg-offset-3 col-lg-6 btn btn-lg btn-primary">Create your card</button>
+            </div>
+        </form>
+
+
+
+    </div>
+{% endblock %}
+

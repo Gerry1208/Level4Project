@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+
+{% load staticfiles %}
+{% load user_agents %}
+
+{%  block title %} Group {{ group.group_name }} {% endblock %}
+
+{% block body_block %}
+    {# this will display all different groups available #}
+    <div class="container-fluid">
+        <div class="row">
+
+            {% if not request|is_mobile %}
+                <div class="col-sm-3 col-md-2">
+                    <div id="sidebr" class="affix-top" data-spy="affix">
+
+                        <ul class="nav nav-sidebar">
+                            <li>
+                                <a>Group {{ group }}</a>
+                            </li>
+                            {% if cards %}
+                                <li>
+                                    <a href="{% url "readyquiz" %}?name={{ group }}&quiz=multi">Multi choice quiz </a>
+                                </li>
+                                <li>
+                                    <a href="{% url "readyquiz" %}?name={{ group }}&quiz=self">Self marked quiz</a>
+                                </li>
+                                <li>
+                                    <a data-toggle="modal" href="#modalShare" data-target="#modalShare">Share this group</a>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                </div>
+            {% endif %}
+
+            <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+                {% if request|is_mobile %}
+                    <h3>Group {{ group }}</h3>
+                {% endif %}
+                {% if cards %}
+                    {% for card in cards %}
+
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h3 class="panel-title">Student: {{ card.name }}</h3>
+                            </div>
+                            <div class="panel-body">
+                                {% if pictures %}
+                                    {% for p in pictures %}
+                                        {% ifequal p.student card %}
+                                            <br> <img src="{{ p.file.url }}"style="width:25%;height:25%;" /> <br>
+                                        {% endifequal %}
+                                    {% endfor %}
+                                {% else %}
+                                    {% if request.user.is_superuser %}
+                                        <a href="{% url "addpicture" %}?card={{ card }}">add a picture for {{ card.name }}</a>
+                                    {% endif %}
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                    <a class="btn btn-primary btn-lg btn-block" href="{% url "readyquiz" %}?name={{ group }}&quiz=multi" role="button">Multi choice quiz</a>
+                    <a class="btn btn-primary btn-lg btn-block" href="{% url "readyquiz" %}?name={{ group }}&quiz=self" role="button">Self marked quiz</a>
+                {% else %}
+                    <h2>There are no cards in this group</h2>
+                    <br>
+                    {% if request.user.is_superuser %}
+                        <a class="btn btn-primary btn-lg" href="{% url "create" %}" role="button">Click here to create one</a> <br> <br>
+                        <a class="btn btn-primary btn-lg" href="{% url "upload" %}" role="button">Or click here to bulk upload a lot</a>
+                    {% else %}
+                        <h3>Please contact 2027289d@student.gla.ac.uk if this is incorrect, Thank you</h3>
+                    {% endif %}
+
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="modal" id="modalShare">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
+                    <h3>Share your group</h3>
+                </div>
+                <div class="modal-body">
+                    <form method="post" action='{% url "share" %}?name={{ group }}' name="share_form">
+                        {% csrf_token %}
+                        <p><input type="text" class="form-control" name="username" id="username" placeholder="Who would you like to share it with?" required autofocus></p>
+                        <p><button type="submit" class="btn btn-primary">Share</button>
+                        </p>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

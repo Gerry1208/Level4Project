@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% load staticfiles %}
+
+{% block title %} Are you ready? {% endblock %}
+
+{% block body_block %}
+    <div class="container">
+        <br>
+        {% ifequal quiz_type "multi" %}
+        <a class="btn btn-primary btn-lg btn-block" href="{% url "quiz" %}" role="button">Ready</a>
+        {% endifequal %}
+        {% ifequal quiz_type "self" %}
+        <a class="btn btn-primary btn-lg btn-block" href="{% url "selfmark" %}" role="button">Ready</a>
+        {% endifequal %}
+    </div>
+{% endblock %}
