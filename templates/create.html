@@ -13,7 +13,8 @@
             var availableGroups = [];
             var n = 0;
             {% for i in groups %}
-                availableGroups[n] = "{{ i }}";
+                availableGroups[n] = "{{ i.id }}"
+                console.log(availableGroups)
                 n++;
             {% endfor %}
             $( "#id_group" ).autocomplete({
@@ -46,7 +47,6 @@
     </script>
 
     <div class="container">
-
         <form id="card_form" method="post" action="/names/create/" class="dropzone"
               enctype="multipart/form-data">
 

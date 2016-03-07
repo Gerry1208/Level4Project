@@ -3,9 +3,23 @@
 {% load staticfiles %}
 {% load user_agents %}
 
-{%  block title %} Group {{ group.group_name }} {% endblock %}
+{%  block title %} Group {{ group }} {% endblock %}
 
 {% block body_block %}
+    <script>
+        $(function() {
+            var availableUsers = [];
+            var n = 0;
+            {% for i in users %}
+                availableUsers[n] = "{{ i }}";
+                console.log(availableUsers);
+                n++;
+            {% endfor %}
+            $( "#id_usr" ).autocomplete({
+                source: availableUsers
+            });
+        });
+    </script>
     {# this will display all different groups available #}
     <div class="container-fluid">
         <div class="row">
@@ -76,6 +90,7 @@
             </div>
         </div>
     </div>
+
     <div class="modal" id="modalShare">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -84,11 +99,12 @@
                     <h3>Share your group</h3>
                 </div>
                 <div class="modal-body">
-                    <form method="post" action='{% url "share" %}?name={{ group }}' name="share_form">
+                    <form method="post" action='{% url "share" %}?name={{ group }}' name="share_form" enctype="multipart/form-data">
                         {% csrf_token %}
-                        <p><input type="text" class="form-control" name="username" id="username" placeholder="Who would you like to share it with?" required autofocus></p>
-                        <p><button type="submit" class="btn btn-primary">Share</button>
-                        </p>
+                        <div class="ui-widget">
+                            <input class="form-control" id="id_usr" name = "usr" placeholder="Search users...">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Share</button>
                     </form>
                 </div>
             </div>

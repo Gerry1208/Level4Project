@@ -14,6 +14,9 @@ from .forms import pictureForm
 from .models import cardPicture, User, groupModel
 import random
 import logging
+import json
+from django.forms.models import model_to_dict
+
 
 logger = logging.getLogger(__name__)
 #form.cleaned_data for all?
@@ -149,11 +152,12 @@ def groups(request):
 def cardview(request):
     group_name = request.GET.get('name')
     cards = card.objects.filter(group=group_name)
+    users = User.objects.values_list("username", flat=True)
     pictures = []
     group = group_name
     for c in cards:
         pictures += cardPicture.objects.filter(student=c.id)
-    return render_to_response('cardview.html', {'cards':cards, 'pictures':pictures, 'group':group}, context_instance=RequestContext(request))
+    return render_to_response('cardview.html', {'cards':cards, 'pictures':pictures, 'group':group, 'users':users}, context_instance=RequestContext(request))
 
 
 @login_required
@@ -205,7 +209,7 @@ def nextQuestion(request):
             pictures = p
 
     if len(pictures) > 1:
-           pictures = []
+        pictures = []
 
     # Gets three random names to go along with it
     # Adds in the correct answer, and shuffles
@@ -251,7 +255,7 @@ def SelfMarkQuiz(request):
             pictures = p
 
     if len(pictures) > 1:
-            pictures = []
+        pictures = []
 
 
     return render_to_response('selfmark.html', {'cards':cards, 'pictures':pictures, 'score':score, 'count':count}, context_instance=RequestContext(request))
@@ -293,7 +297,7 @@ class addPicture(FormView):
 @csrf_protect
 @login_required
 def create_cards(request):
-    groupList = groupModel.objects.values_list("group_name",flat=True)
+    groupList = groupModel.objects.values("id", "group_name")
     if request.method == 'POST':
         card_form = cardForm(data = request.POST)
         pic_form = picForm(request.POST, request.FILES)
@@ -317,9 +321,9 @@ def complete(request):
     return render_to_response('complete.html', {'score':score}, context_instance=RequestContext(request))
 
 def share(request):
-    share_form = shareForm(request.POST)
+    share_form = request.POST.get('usr')
     groupName=request.GET.get('name')
-    if share_form.is_valid():
-        g = groupModel.objects.get(group_name = "a")
-        u = User.objects.filter(username="ge")
-        g.user.add(u)
+    g = groupModel.objects.get(id = groupName)
+    u = User.objects.get(username=share_form)
+    g.user.add(u.id)
+    return render(request, "index.html")

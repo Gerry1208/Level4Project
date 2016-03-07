@@ -12,7 +12,7 @@ class UserProfile(models.Model):
 #This Model is for groups, and is related to user by a many to many relationship
 class groupModel(models.Model):
     user = models.ManyToManyField(User)
-    group_name = models.CharField(max_length=40, unique=True, primary_key=True)
+    group_name = models.CharField(max_length=40)
 
     def __unicode__(self):
         return self.group_name

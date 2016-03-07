@@ -18,5 +18,5 @@ urlpatterns = patterns('',
                         url(r'^complete/$', views.complete, name='complete'),
                         url(r'^changepass/$', views.change_password, name='changepass'),
                         url(r'^$', views.index, name='home'),
-                        url(r'^cardview/$', views.share, name='share'),
+                        url(r'^share/$', views.share, name='share'),
                        )

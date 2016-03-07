@@ -6,30 +6,28 @@
 
 {#this needs to be pop up#}
 {% block body_block %}
-<br>
-<div class="container">
-    <div id="view">
-        {% if request.user.is_superuser %}
-        <form id="group_form" method="post" action="/names/groups/"
-              enctype="multipart/form-data">
-            {% csrf_token %}
-            To add another group:<br>
-            {{ group_form.as_p }}
-        </form>
-        {% endif %}
-        <form id="groups_form" method="post" action="/names/cardview/"
-              enctype="multipart/form-data">
+    <br>
+    <div class="container">
+        <div id="view">
+            {% if request.user.is_superuser %}
+                <form id="group_form" method="post" action="/names/groups/"
+                      enctype="multipart/form-data">
+                    {% csrf_token %}
+                    To add another group:<br>
+                    {{ group_form.as_p }}
+                </form>
+            {% endif %}
             <br>
             {# this will display all different groups available #}
             {% if groups %}
                 {% for group in groups %}
-                    <a class="btn btn-lg btn-primary" href="{% url "cardview" %}?name={{ group.group_name }}" role="button">Group {{ group.group_name }}</a> <br>
+                    <a class="btn btn-lg btn-primary" href="{% url "cardview" %}?name={{ group.id }}" role="button">Group {{ group.group_name }}</a> <br>
                     <br>
                 {% endfor %}
             {% else %}
                 <strong>There are no groups</strong>
             {% endif %}
-        </form>
+
+        </div>
     </div>
-</div>
 {% endblock %}
