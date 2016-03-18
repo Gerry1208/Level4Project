@@ -7,6 +7,7 @@
 
 {% block body_block %}
     <div class="container">
+        <br>
         {% if registered %}
         <strong>Thank you for registering!</strong>
         <a class="btn btn-primary btn-lg" href="/names/index/" role="button">Click here to go to the homepage</a>
@@ -17,6 +18,9 @@
                 enctype="multipart/form-data">
 
             {% csrf_token %}
+            {% if user_form == 'existing username' %}
+                <h4>That username is already taken, please choose another</h4>
+            {% endif %}
             <h2 class="form-signin-heading">Registration</h2>
             <p><label for="id_username"></label> <input id="id_username" class="form-control" maxlength="30" name="username" type="text" placeholder="Username" required autofocus> <span class="helptext">Required. 30 characters or fewer. Letters, digits and @/./+/-/_ only.</span></p>
             <p><label for="id_email"></label> <input id="id_email" class="form-control" maxlength="75" name="email" type="email" placeholder="Email address"required></p>

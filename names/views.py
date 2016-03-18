@@ -1,5 +1,5 @@
-from lib2to3.fixes.fix_input import context
-from names.forms import UserForm, UserProfileForm, cardForm, groupsForm, picForm, bulkUpload, shareForm
+
+from names.forms import UserForm, UserProfileForm, cardForm, groupsForm, picForm, bulkUpload
 from django.shortcuts import render, render_to_response, redirect
 from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
 from django.contrib.auth.forms import PasswordChangeForm
@@ -8,14 +8,13 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.template import RequestContext
 from django.views.decorators.csrf import csrf_protect
-from names.models import groupModel, card, cardPicture
+from names.models import card
 from django.views.generic.edit import FormView
 from .forms import pictureForm
 from .models import cardPicture, User, groupModel
 import random
 import logging
 import json
-from django.forms.models import model_to_dict
 
 
 logger = logging.getLogger(__name__)
@@ -69,7 +68,8 @@ def register(request):
             # This delays saving the model until we're ready to avoid integrity problems.
             profile = profile_form.save(commit=False)
             profile.user = user
-
+            user = authenticate(username=user_form.cleaned_data['username'],password=user_form.cleaned_data['password'],)
+            login(request,user)
             # Did the user provide a profile picture?
             # If so, we need to get it from the input form and put it in the UserProfile model.
             if 'picture' in request.FILES:
@@ -85,7 +85,9 @@ def register(request):
         # Print problems to the terminal.
         # They'll also be shown to the user.
         else:
-            print user_form.errors, profile_form.errors
+            return render(request,
+                          'register.html',
+                          {'user_form': "existing username", 'profile_form': profile_form.errors, 'error':"true"} )
 
     # Not a HTTP POST, so we render our form using two ModelForm instances.
     # These forms will be blank, ready for user input.
@@ -154,10 +156,12 @@ def cardview(request):
     cards = card.objects.filter(group=group_name)
     users = User.objects.values_list("username", flat=True)
     pictures = []
-    group = group_name
+    group = groupModel.objects.filter(id=group_name)
+    groupID = groupModel.objects.filter(id=group_name).values('id')
+    UserID = card.objects.filter(group=group_name).values('id')
     for c in cards:
         pictures += cardPicture.objects.filter(student=c.id)
-    return render_to_response('cardview.html', {'cards':cards, 'pictures':pictures, 'group':group, 'users':users}, context_instance=RequestContext(request))
+    return render_to_response('cardview.html', {'cards':cards, 'pictures':pictures, 'group':group, 'users':users, 'groupID':groupID, 'cardID':UserID}, context_instance=RequestContext(request))
 
 
 @login_required
@@ -177,12 +181,12 @@ def quiz(request):
     request.session['count'] = count
 
     return render_to_response('readyquiz.html', {'cards':cards, 'pictures':pictures, 'count': count, 'quiz_type':quiz_type}, context_instance=RequestContext(request))
-
+@login_required
 def nextQuestion(request):
     cards = request.session.get('cards')
     pictures = request.session.get('pictures')
     count = request.session.get('count')
-
+    cardNum = 10
     score = 0
     if(request.GET.get('score')):
         score = request.GET.get('score')
@@ -191,6 +195,8 @@ def nextQuestion(request):
     if len(cards) < 10:
         if count==(len(cards)-1):
             count = 10
+        if len(cards) < 4:
+            return render(request, 'index.html')
 
     if count == 10:
         score = (score/count) * 100
@@ -199,8 +205,6 @@ def nextQuestion(request):
 
     count += 1
     request.session['count'] = count
-
-
 
     # Gets the correct card and corresponding photo
     card = cards[count]
@@ -221,9 +225,6 @@ def nextQuestion(request):
             rndNames.append(choice)
 
     random.shuffle(rndNames)
-
-
-
     return render_to_response('quiz.html', {'cards':card, 'pictures':pictures, 'names':rndNames, 'score':score, 'count':count}, context_instance=RequestContext(request))
 
 
@@ -289,8 +290,8 @@ class addPicture(FormView):
     def form_valid(self, form):
         for each in form.cleaned_data['files']:
             studArray= each.name.split(".")
-            studName=studArray[0]
-            studCard = card.objects.filter(student=studName).first()
+            #studName=studArray[0]
+            #studCard = card.objects.filter(student=studName).first()
             cardPicture.objects.create(file=each, student=studCard)
         return super(addPicture,self).form_valid(form)
 

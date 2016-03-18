@@ -3,7 +3,7 @@
 {% load staticfiles %}
 {% load user_agents %}
 
-{%  block title %} Group {{ group }} {% endblock %}
+{%  block title %} Group {{ group.0 }} {% endblock %}
 
 {% block body_block %}
     <script>
@@ -30,14 +30,14 @@
 
                         <ul class="nav nav-sidebar">
                             <li>
-                                <a>Group {{ group }}</a>
+                                <a>Group {{ group.0 }}</a>
                             </li>
                             {% if cards %}
                                 <li>
-                                    <a href="{% url "readyquiz" %}?name={{ group }}&quiz=multi">Multi choice quiz </a>
+                                    <a href="{% url "readyquiz" %}?name={{ groupID.0.id }}&quiz=multi">Multi choice quiz </a>
                                 </li>
                                 <li>
-                                    <a href="{% url "readyquiz" %}?name={{ group }}&quiz=self">Self marked quiz</a>
+                                    <a href="{% url "readyquiz" %}?name={{ groupID.0.id }}&quiz=self">Self marked quiz</a>
                                 </li>
                                 <li>
                                     <a data-toggle="modal" href="#modalShare" data-target="#modalShare">Share this group</a>
@@ -67,24 +67,18 @@
                                         {% endifequal %}
                                     {% endfor %}
                                 {% else %}
-                                    {% if request.user.is_superuser %}
-                                        <a href="{% url "addpicture" %}?card={{ card }}">add a picture for {{ card.name }}</a>
-                                    {% endif %}
+{#                                    <a href="{% url "addpicture" %}?card={{ cardID }}">add a picture for {{ card.name }}</a>#}
                                 {% endif %}
                             </div>
                         </div>
                     {% endfor %}
-                    <a class="btn btn-primary btn-lg btn-block" href="{% url "readyquiz" %}?name={{ group }}&quiz=multi" role="button">Multi choice quiz</a>
-                    <a class="btn btn-primary btn-lg btn-block" href="{% url "readyquiz" %}?name={{ group }}&quiz=self" role="button">Self marked quiz</a>
+                    <a class="btn btn-primary btn-lg btn-block" href="{% url "readyquiz" %}?name={{ groupID.0.id }}&quiz=multi" role="button">Multi choice quiz</a>
+                    <a class="btn btn-primary btn-lg btn-block" href="{% url "readyquiz" %}?name={{ groupID.0.id }}&quiz=self" role="button">Self marked quiz</a>
                 {% else %}
                     <h2>There are no cards in this group</h2>
                     <br>
-                    {% if request.user.is_superuser %}
-                        <a class="btn btn-primary btn-lg" href="{% url "create" %}" role="button">Click here to create one</a> <br> <br>
-                        <a class="btn btn-primary btn-lg" href="{% url "upload" %}" role="button">Or click here to bulk upload a lot</a>
-                    {% else %}
-                        <h3>Please contact 2027289d@student.gla.ac.uk if this is incorrect, Thank you</h3>
-                    {% endif %}
+                    <a class="btn btn-primary btn-lg" href="{% url "create" %}" role="button">Click here to create one</a> <br> <br>
+                    <a class="btn btn-primary btn-lg" href="{% url "upload" %}" role="button">Or click here to bulk upload a lot</a>
 
                 {% endif %}
             </div>

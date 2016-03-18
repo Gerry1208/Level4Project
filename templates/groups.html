@@ -9,19 +9,17 @@
     <br>
     <div class="container">
         <div id="view">
-            {% if request.user.is_superuser %}
-                <form id="group_form" method="post" action="/names/groups/"
-                      enctype="multipart/form-data">
-                    {% csrf_token %}
-                    To add another group:<br>
-                    {{ group_form.as_p }}
-                </form>
-            {% endif %}
+            <form id="group_form" method="post" action="/names/groups/"
+                  enctype="multipart/form-data">
+                {% csrf_token %}
+                To add another group:<br>
+                <input id="id_group_name" maxlength="40" name="group_name" type="text" placeholder="Press enter to submit"/>
+            </form>
             <br>
             {# this will display all different groups available #}
             {% if groups %}
                 {% for group in groups %}
-                    <a class="btn btn-lg btn-primary" href="{% url "cardview" %}?name={{ group.id }}" role="button">Group {{ group.group_name }}</a> <br>
+                    <a class="btn btn-lg btn-primary" href="{% url "cardview" %}?name={{ group.id }}" role="button">Group name:{{ group.group_name }} <br> id:{{ group.id }}</a> <br>
                     <br>
                 {% endfor %}
             {% else %}

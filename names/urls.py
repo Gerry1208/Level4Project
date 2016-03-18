@@ -1,6 +1,5 @@
 from django.conf.urls import patterns, url
 from names import views
-from django.views.generic import TemplateView
 
 urlpatterns = patterns('',
                         url(r'^register/$', views.register, name='register'),

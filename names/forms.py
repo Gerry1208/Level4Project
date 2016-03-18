@@ -42,12 +42,12 @@ class bulkUpload(forms.Form):
         for line in records:
             group_input = groupModel()
             input_data = card()
-            group_input.group_name = line[2]
+            group_input.id = int(line[2])
             group_input.user.add(request.user.id)
             group_input.save()
-            input_data.student = line[0]
             input_data.name = line[1]
-            input_data.group = group_input
+            input_data.save()
+            input_data.group.add(group_input)
             input_data.save()
 
 class pictureForm(forms.Form):

@@ -46,14 +46,12 @@
                 <li>
                     <a href="{% url "groupview" %}">Groups</a>
                 </li>
-                {% if request.user.is_superuser %}
-                    <li>
-                        <a href="{% url "create" %}">Create a card</a>
-                    </li>
-                    <li>
-                        <a href="{% url "upload" %}">Bulk Upload</a>
-                    </li>
-                {% endif %}
+                <li>
+                    <a href="{% url "create" %}">Create a card</a>
+                </li>
+                <li>
+                    <a href="{% url "upload" %}">Bulk Upload</a>
+                </li>
                 {% block navbar_add %}{% endblock %}
             </ul>
             <ul class="nav navbar-nav navbar-right">

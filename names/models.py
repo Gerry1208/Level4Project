@@ -19,7 +19,6 @@ class groupModel(models.Model):
 
 #This Model is for cards, related to groupModel by a many to one relationship
 class card(models.Model):
-
     group = models.ManyToManyField(groupModel)
     name = models.CharField(max_length=100)
     bio = models.CharField(max_length = 1000)
