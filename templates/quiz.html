@@ -19,21 +19,20 @@
             {% if request|is_mobile %}
                 <div id="page">
             {% endif %}
+        <div id="question" data-value="{{ cards.0 }}">
+            Who is this student?: <br><img class="img-thumbnail" src="/media/card_images/{{ cards.0 }}.jpg"style="width:25%;height:25%;" /><br>
+            <br>
 
-            <div id="question" data-value="{{ cards.0 }}">
-                Who is this student?: <br><img class="img-thumbnail" src="/media/card_images/{{ cards.0 }}.jpg"style="width:25%;height:25%;" /><br>
-                <br>
+            {% for name in names %}
+                <button type="button" onclick='myFunction(value)' class="btn btn btn-primary btn-block" value="{{ name.0 }}" id="{{ name.0 }}"> {{ name.1 }}</button>
+            {% endfor %}
 
-                    {% for name in names %}
-                        <button type="button" onclick='myFunction(value)' class="btn btn btn-primary btn-block" value="{{ name.0 }}" id="{{ name.0 }}"> {{ name.1 }}</button>
-                    {% endfor %}
-
-            </div>
+        </div>
         <br><br><br>
         <a class="btn btn-primary btn-sm" href="{% url "groupview" %}" role="button">Quit and Return to groups</a>
         </div>
-    {% endifequal %}
-    </div>
+        {% endifequal %}
+        </div>
     </div>
 
     <script>
@@ -41,7 +40,7 @@
         function myFunction(value){
             var card = $('#question').data('value');
             var score = {{ score }}
-            document.getElementById(card).className = "btn btn btn-success btn-block"
+                    document.getElementById(card).className = "btn btn btn-success btn-block"
             if( card == value){
                 score++
             }

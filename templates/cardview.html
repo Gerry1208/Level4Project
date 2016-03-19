@@ -27,6 +27,9 @@
                     <li>
                         <a href="{% url "readyquiz" %}?name={{ group }}&quiz=self">Self marked quiz</a>
                     </li>
+                    <li>
+                        <a href="{% url "addpicture" %}">Add pictures</a>
+                    </li>
                     {% endif %}
                 </ul>
                 </div>
@@ -42,10 +45,11 @@
 
                         <div class="panel panel-default">
                             <div class="panel-heading">
-                                <h3 class="panel-title">Student: {{ card.name }}</h3>
+                                <h3 class="panel-title">Student Name: {{ card.name }}</h3>
                             </div>
                             <div class="panel-body">
                                 Student Number: {{ card.student }}<br>
+                                Some information: {{ card.bio }}
                                 {% if pictures %}
                                     {% for p in pictures %}
                                         {% ifequal p.student card %}
@@ -53,9 +57,7 @@
                                         {% endifequal %}
                                     {% endfor %}
                                 {% else %}
-                                    {% if request.user.is_superuser %}
                                     <a href="{% url "addpicture" %}?card={{ card }}">add a picture for {{ card.name }}</a>
-                                    {% endif %}
                                 {% endif %}
                             </div>
                         </div>
@@ -65,12 +67,8 @@
                 {% else %}
                     <h2>There are no cards in this group</h2>
                     <br>
-                    {% if request.user.is_superuser %}
                     <a class="btn btn-primary btn-lg" href="{% url "create" %}" role="button">Click here to create one</a> <br> <br>
                     <a class="btn btn-primary btn-lg" href="{% url "upload" %}" role="button">Or click here to bulk upload a lot</a>
-                    {% else %}
-                    <h3>Please contact 2027289d@student.gla.ac.uk if this is incorrect, Thank you</h3>
-                    {% endif %}
 
                 {% endif %}
             </div>

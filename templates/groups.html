@@ -9,14 +9,12 @@
 <br>
 <div class="container">
     <div id="view">
-        {% if request.user.is_superuser %}
         <form id="group_form" method="post" action="/names/groups/"
               enctype="multipart/form-data">
             {% csrf_token %}
             To add another group:<br>
             {{ group_form.as_p }}
         </form>
-        {% endif %}
         <form id="groups_form" method="post" action="/names/cardview/"
               enctype="multipart/form-data">
             <br>

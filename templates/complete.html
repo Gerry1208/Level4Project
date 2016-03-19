@@ -8,7 +8,15 @@
     <div class="container">
         <br>
         <div class="jumbotron">
-            <h1>Well done!</h1>
+            {% if score|add:0 <= 3 %}
+                <h2>You can do better!</h2>
+            {% elif score|add:0 > 3 and score|add:0 <= 6  %}
+                <h2>Keep going!</h2>
+            {% elif score|add:0 > 6 and score|add:0 < 10 %}
+                <h2>So close!</h2>
+            {% elif score|add:0 == 10 %}
+                <h2>Perfect! Well done!</h2>
+            {% endif %}
             <h3>You scored {{ score }}</h3>
             <a class="btn btn-primary btn-lg" href="{% url "groupview" %}" role="button">Click here to go back to groups</a> <br> <br>
         </div>

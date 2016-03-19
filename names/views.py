@@ -66,7 +66,8 @@ def register(request):
             # This delays saving the model until we're ready to avoid integrity problems.
             profile = profile_form.save(commit=False)
             profile.user = user
-
+            user = authenticate(username=user_form.cleaned_data['username'],password=user_form.cleaned_data['password'],)
+            login(request,user)
             # Did the user provide a profile picture?
             # If so, we need to get it from the input form and put it in the UserProfile model.
             if 'picture' in request.FILES:
@@ -199,25 +200,25 @@ def nextQuestion(request):
     cards = request.session.get('cards')
     pictures = request.session.get('pictures')
     count = request.session.get('count')
-
     score = 0
+
     if(request.GET.get('score')):
         score = request.GET.get('score')
 
-    # Gets the correct question number, and finishes the quiz if 10 questions have been answered
+        # Gets the correct question number, and finishes the quiz if 10 questions have been answered
     if len(cards) < 10:
         if count==(len(cards)-1):
             count = 10
 
     if count == 10:
-        score = (score/count) * 100
-        return render_to_response('selfmark.html', {'cards':cards, 'pictures':pictures, 'score':score, 'count':count}, context_instance=RequestContext(request))
+        return render_to_response('quiz.html', {'score':score, 'count':count}, context_instance=RequestContext(request))
+
+    if len(cards) < 4:
+        return render(request, 'index.html')
 
 
     count += 1
     request.session['count'] = count
-
-
 
     # Gets the correct card and corresponding photo
     card = cards[count]
@@ -226,7 +227,7 @@ def nextQuestion(request):
             pictures = p
 
     if len(pictures) > 1:
-           pictures = []
+        pictures = []
 
     # Gets three random names to go along with it
     # Adds in the correct answer, and shuffles
@@ -238,10 +239,9 @@ def nextQuestion(request):
             rndNames.append(choice)
 
     random.shuffle(rndNames)
-
-
-
     return render_to_response('quiz.html', {'cards':card, 'pictures':pictures, 'names':rndNames, 'score':score, 'count':count}, context_instance=RequestContext(request))
+
+
 
 
 
@@ -260,7 +260,7 @@ def SelfMarkQuiz(request):
             count = 10
 
     if count == 10:
-        return render_to_response('selfmark.html', {'cards':cards, 'pictures':pictures, 'score':score, 'count':count}, context_instance=RequestContext(request))
+        return render_to_response('selfmark.html', {'score':score, 'count':count}, context_instance=RequestContext(request))
 
     # Gets the correct question number, and finishes the quiz if 10 questions have been answered
     count += 1
@@ -272,7 +272,7 @@ def SelfMarkQuiz(request):
             pictures = p
 
     if len(pictures) > 1:
-            pictures = []
+        pictures = []
 
 
     return render_to_response('selfmark.html', {'cards':cards, 'pictures':pictures, 'score':score, 'count':count}, context_instance=RequestContext(request))

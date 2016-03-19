@@ -47,7 +47,8 @@ class bulkUpload(forms.Form):
             group_input.save()
             input_data.student = line[0]
             input_data.name = line[1]
-            input_data.group = group_input
+            input_data.save()
+            input_data.group.add(group_input)
             input_data.save()
 
 class pictureForm(forms.Form):
