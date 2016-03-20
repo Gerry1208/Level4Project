@@ -1,5 +1,4 @@
-
-from names.forms import UserForm, UserProfileForm, cardForm, groupsForm, picForm, bulkUpload
+from names.forms import UserForm, cardForm, groupsForm, picForm, bulkUpload
 from django.shortcuts import render, render_to_response, redirect
 from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
 from django.contrib.auth.forms import PasswordChangeForm
@@ -13,12 +12,6 @@ from django.views.generic.edit import FormView
 from .forms import pictureForm
 from .models import cardPicture, User, groupModel
 import random
-import logging
-import json
-
-
-logger = logging.getLogger(__name__)
-#form.cleaned_data for all?
 
 @login_required
 def change_password(request):
@@ -41,65 +34,25 @@ def index(request):
     return render(request, 'index.html', {})
 
 def register(request):
-
-    # A boolean value for telling the template whether the registration was successful.
-    # Set to False initially. Code changes value to True when registration succeeds.
     registered = False
-
-    # If it's a HTTP POST, we're interested in processing form data.
     if request.method == 'POST':
-        # Attempt to grab information from the raw form information.
-        # Note that we make use of both UserForm and UserProfileForm.
         user_form = UserForm(data=request.POST)
-        profile_form = UserProfileForm(data=request.POST)
-
-        # If the two forms are valid...
-        if user_form.is_valid() and profile_form.is_valid():
-            # Save the user's form data to the database.
+        if user_form.is_valid():
             user = user_form.save()
-
-            # Now we hash the password with the set_password method.
-            # Once hashed, we can update the user object.
             user.set_password(user.password)
             user.save()
-
-            # Now sort out the UserProfile instance.
-            # Since we need to set the user attribute ourselves, we set commit=False.
-            # This delays saving the model until we're ready to avoid integrity problems.
-            profile = profile_form.save(commit=False)
-            profile.user = user
             user = authenticate(username=user_form.cleaned_data['username'],password=user_form.cleaned_data['password'],)
             login(request,user)
-            # Did the user provide a profile picture?
-            # If so, we need to get it from the input form and put it in the UserProfile model.
-            if 'picture' in request.FILES:
-                profile.picture = request.FILES['picture']
-
-            # Now we save the UserProfile model instance.
-            profile.save()
-
-            # Update our variable to tell the template registration was successful.
             registered = True
-
-        # Invalid form or forms - mistakes or something else?
-        # Print problems to the terminal.
-        # They'll also be shown to the user.
         else:
             return render(request,
                           'register.html',
-                          {'user_form': "existing username", 'profile_form': profile_form.errors, 'error':"true"} )
-
-    # Not a HTTP POST, so we render our form using two ModelForm instances.
-    # These forms will be blank, ready for user input.
+                          {'user_form': "existing username", 'error':"true"} )
     else:
         user_form = UserForm()
-        profile_form = UserProfileForm()
-
-    # Render the template depending on the context.
     return render(request,
                   'register.html',
-                  {'user_form': user_form, 'profile_form': profile_form, 'registered': registered} )
-
+                  {'user_form': user_form, 'registered': registered})
 
 @login_required
 def upload(request):
@@ -152,16 +105,21 @@ def groups(request):
 @csrf_protect
 @login_required
 def cardview(request):
+    if request.method == "POST":
+        cardID = request.POST.get('card')
+        cardItem = card.objects.get(id=cardID)
+        pic = cardPicture(file = request.FILES['file'])
+        pic.card = cardItem
+        pic.save()
     group_name = request.GET.get('name')
     cards = card.objects.filter(group=group_name)
     users = User.objects.values_list("username", flat=True)
+    pictureCards = cardPicture.objects.values_list('card', flat=True)
     pictures = []
-    group = groupModel.objects.filter(id=group_name)
-    groupID = groupModel.objects.filter(id=group_name).values('id')
-    UserID = card.objects.filter(group=group_name).values('id')
+    group = groupModel.objects.filter(group_name=group_name)
     for c in cards:
-        pictures += cardPicture.objects.filter(student=c.id)
-    return render_to_response('cardview.html', {'cards':cards, 'pictures':pictures, 'group':group, 'users':users, 'groupID':groupID, 'cardID':UserID}, context_instance=RequestContext(request))
+        pictures += cardPicture.objects.filter(card=c.id)
+    return render_to_response('cardview.html', {'pictureCards':pictureCards, 'cards':cards, 'pictures':pictures, 'group':group, 'users':users}, context_instance=RequestContext(request))
 
 
 @login_required
@@ -181,13 +139,14 @@ def quiz(request):
     request.session['count'] = count
 
     return render_to_response('readyquiz.html', {'cards':cards, 'pictures':pictures, 'count': count, 'quiz_type':quiz_type}, context_instance=RequestContext(request))
+
 @login_required
 def nextQuestion(request):
     cards = request.session.get('cards')
     pictures = request.session.get('pictures')
     count = request.session.get('count')
-    cardNum = 10
     score = 0
+
     if(request.GET.get('score')):
         score = request.GET.get('score')
 
@@ -200,7 +159,7 @@ def nextQuestion(request):
 
     if count == 10:
         score = (score/count) * 100
-        return render_to_response('selfmark.html', {'cards':cards, 'pictures':pictures, 'score':score, 'count':count}, context_instance=RequestContext(request))
+        return render_to_response('quiz.html', {'score':score, 'count':count}, context_instance=RequestContext(request))
 
 
     count += 1
@@ -213,7 +172,7 @@ def nextQuestion(request):
             pictures = p
 
     if len(pictures) > 1:
-        pictures = []
+        pictures = pictures[0]
 
     # Gets three random names to go along with it
     # Adds in the correct answer, and shuffles
@@ -298,7 +257,7 @@ class addPicture(FormView):
 @csrf_protect
 @login_required
 def create_cards(request):
-    groupList = groupModel.objects.values("id", "group_name")
+    groupList = groupModel.objects.values("group_name")
     if request.method == 'POST':
         card_form = cardForm(data = request.POST)
         pic_form = picForm(request.POST, request.FILES)
@@ -308,7 +267,7 @@ def create_cards(request):
             card.save()
 
             pic = cardPicture(file = request.FILES['file'])
-            pic.student = card
+            pic.card = card
             pic.save()
     else:
         card_form = cardForm()
@@ -324,7 +283,7 @@ def complete(request):
 def share(request):
     share_form = request.POST.get('usr')
     groupName=request.GET.get('name')
-    g = groupModel.objects.get(id = groupName)
+    g = groupModel.objects.get(group_name = groupName)
     u = User.objects.get(username=share_form)
     g.user.add(u.id)
     return render(request, "index.html")

@@ -15,13 +15,12 @@
         {% else %}
             {% if not request|is_mobile %}
                 <div id="page" class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-            {% endif %}
-            {% if request|is_mobile %}
+            {% else %}
                 <div id="page">
             {% endif %}
 
             <div id="question" data-value="{{ cards.0 }}">
-                Who is this student?: <br><img class="img-thumbnail" src="/media/card_images/{{ cards.0 }}.jpg"style="width:25%;height:25%;" /><br>
+                Who is this student?: <br><img class="img-thumbnail" src="/media/{{ pictures.2 }}" style="width:100px;height:100px;" /><br>
                 <br>
 
                     {% for name in names %}
@@ -33,7 +32,6 @@
         <a class="btn btn-primary btn-sm" href="{% url "groupview" %}" role="button">Quit and Return to groups</a>
         </div>
     {% endifequal %}
-    </div>
     </div>
 
     <script>
@@ -57,7 +55,7 @@
                 data:{score:score},
                 datatype: 'json',
                 success:function(data){
-                    $("#entire").html(data)
+                    $("#page").load(' #question')
                 }
             })
 

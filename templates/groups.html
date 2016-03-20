@@ -19,7 +19,7 @@
             {# this will display all different groups available #}
             {% if groups %}
                 {% for group in groups %}
-                    <a class="btn btn-lg btn-primary" href="{% url "cardview" %}?name={{ group.id }}" role="button">Group name:{{ group.group_name }} <br> id:{{ group.id }}</a> <br>
+                    <a class="btn btn-lg btn-primary" href="{% url "cardview" %}?name={{ group.group_name  }}" role="button">Group {{ group.group_name }}</a> <br>
                     <br>
                 {% endfor %}
             {% else %}

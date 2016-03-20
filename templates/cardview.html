@@ -19,6 +19,28 @@
                 source: availableUsers
             });
         });
+
+        Dropzone.options.cardForm = {
+            autoProcessQueue: true,
+            parallelUploads: 100,
+            maxFiles: 100,
+
+            init: function () {
+                var submitButton = document.querySelector("#submit")
+                myDropzone = this;
+
+                submitButton.addEventListener("click", function () {
+                    myDropzone.processQueue();
+                    // Tell Dropzone to process all queued files.
+                });
+
+                // You might want to show the submit button only when
+                // files are dropped here:
+                this.on("addedfile", function () {
+                    // Show submit button here and/or inform user to click it.
+                });
+            }
+        }
     </script>
     {# this will display all different groups available #}
     <div class="container-fluid">
@@ -34,10 +56,13 @@
                             </li>
                             {% if cards %}
                                 <li>
-                                    <a href="{% url "readyquiz" %}?name={{ groupID.0.id }}&quiz=multi">Multi choice quiz </a>
+                                    <a href="{% url "readyquiz" %}?name={{ group.0 }}&quiz=multi">Multi choice quiz </a>
                                 </li>
                                 <li>
-                                    <a href="{% url "readyquiz" %}?name={{ groupID.0.id }}&quiz=self">Self marked quiz</a>
+                                    <a href="{% url "readyquiz" %}?name={{ group.0 }}&quiz=self">Self marked quiz</a>
+                                </li>
+                                <li>
+                                    <a href="{% url "addpicture" %}?name={{ group.0 }}">Add pictures!</a>
                                 </li>
                                 <li>
                                     <a data-toggle="modal" href="#modalShare" data-target="#modalShare">Share this group</a>
@@ -48,32 +73,51 @@
                 </div>
             {% endif %}
 
-            <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+            <div class="col-sm-6 main">
                 {% if request|is_mobile %}
-                    <h3>Group {{ group }}</h3>
+                    <h3>Group {{ group.0 }}</h3>
                 {% endif %}
                 {% if cards %}
                     {% for card in cards %}
 
                         <div class="panel panel-default">
                             <div class="panel-heading">
-                                <h3 class="panel-title">Student: {{ card.name }}</h3>
+                                <h3 class="panel-title">{{ card.name }}</h3>
                             </div>
                             <div class="panel-body">
-                                {% if pictures %}
-                                    {% for p in pictures %}
-                                        {% ifequal p.student card %}
-                                            <br> <img src="{{ p.file.url }}"style="width:25%;height:25%;" /> <br>
-                                        {% endifequal %}
-                                    {% endfor %}
-                                {% else %}
-{#                                    <a href="{% url "addpicture" %}?card={{ cardID }}">add a picture for {{ card.name }}</a>#}
-                                {% endif %}
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        {% if pictures %}
+                                            {% if card.id in pictureCards %}
+                                                {% for p in pictures %}
+                                                    {% ifequal p.card card %}
+                                                        <br> <img src="{{ p.file.url }}" style="width:100%;height:100%;" /> <br>
+                                                    {% endifequal %}
+                                                {% endfor %}
+                                            {% else  %}
+                                                <div id="dropzone">
+                                                    <form id="card_form" method="post" action="/names/cardview/" class="dropzone needsclick"
+                                                          enctype="multipart/form-data">
+                                                        {% csrf_token %}
+                                                        <div class="dz-message dz-needsclick">
+                                                            Click here, or drag an image...
+                                                        </div>
+                                                        <input type="hidden" value="{{ card.id }}" name="card">
+                                                    </form>
+                                                </div>
+                                            {% endif %}
+                                        {% endif %}
+
+                                    </div>
+                                    <div class="col-md-6">
+                                        A little more information: <br> {{ card.bio }}
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     {% endfor %}
-                    <a class="btn btn-primary btn-lg btn-block" href="{% url "readyquiz" %}?name={{ groupID.0.id }}&quiz=multi" role="button">Multi choice quiz</a>
-                    <a class="btn btn-primary btn-lg btn-block" href="{% url "readyquiz" %}?name={{ groupID.0.id }}&quiz=self" role="button">Self marked quiz</a>
+                    <a class="btn btn-primary btn-lg btn-block" href="{% url "readyquiz" %}?name={{ group.0 }}&quiz=multi" role="button">Multi choice quiz</a>
+                    <a class="btn btn-primary btn-lg btn-block" href="{% url "readyquiz" %}?name={{ group.0}}&quiz=self" role="button">Self marked quiz</a>
                 {% else %}
                     <h2>There are no cards in this group</h2>
                     <br>
@@ -93,11 +137,12 @@
                     <h3>Share your group</h3>
                 </div>
                 <div class="modal-body">
-                    <form method="post" action='{% url "share" %}?name={{ group }}' name="share_form" enctype="multipart/form-data">
+                    <form method="post" action='{% url "share" %}?name={{ group.0 }}' name="share_form" enctype="multipart/form-data">
                         {% csrf_token %}
                         <div class="ui-widget">
                             <input class="form-control" id="id_usr" name = "usr" placeholder="Search users...">
                         </div>
+                        <br>
                         <button type="submit" class="btn btn-primary">Share</button>
                     </form>
                 </div>

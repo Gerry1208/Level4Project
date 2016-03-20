@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.models import User
-from names.models import UserProfile, groupModel, card, cardPicture
+from names.models import groupModel, card, cardPicture
 import csv
 from multiupload.fields import MultiFileField
 #PLACEHOLDERS TO ADD FOR ALL
@@ -13,11 +13,6 @@ class UserForm(forms.ModelForm):
         model = User
         fields = ('username', 'email', 'password')
 
-
-class UserProfileForm(forms.ModelForm):
-    class Meta:
-        model = UserProfile
-        fields = ('picture',)
 
 class groupsForm(forms.ModelForm):
     class Meta:
@@ -42,10 +37,10 @@ class bulkUpload(forms.Form):
         for line in records:
             group_input = groupModel()
             input_data = card()
-            group_input.id = int(line[2])
+            group_input.group_name = line[1]
             group_input.user.add(request.user.id)
             group_input.save()
-            input_data.name = line[1]
+            input_data.name = line[0]
             input_data.save()
             input_data.group.add(group_input)
             input_data.save()

@@ -38,7 +38,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('file', models.FileField(null=True, upload_to=b'card_images')),
-                ('student', models.ForeignKey(to='names.card')),
+                ('card', models.ForeignKey(to='names.card')),
             ],
             options={
             },
@@ -47,20 +47,8 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='groupModel',
             fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('group_name', models.CharField(max_length=40)),
+                ('group_name', models.CharField(max_length=40, serialize=False, primary_key=True)),
                 ('user', models.ManyToManyField(to=settings.AUTH_USER_MODEL)),
-            ],
-            options={
-            },
-            bases=(models.Model,),
-        ),
-        migrations.CreateModel(
-            name='UserProfile',
-            fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('picture', models.ImageField(default=b'C:\\Users\\Gerry\\Downloads\\d4zWOgz.jpg', upload_to=b'profile_images', blank=True)),
-                ('user', models.OneToOneField(to=settings.AUTH_USER_MODEL)),
             ],
             options={
             },

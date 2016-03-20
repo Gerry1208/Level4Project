@@ -36,7 +36,6 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'names',
-    'tastypie',
     'django_extensions',
     'django_user_agents',
 )
