@@ -84,25 +84,23 @@
                             <div class="panel-body">
                                 <div class="row">
                                     <div class="col-md-6">
-                                        {% if pictures %}
-                                            {% if card.id in pictureCards %}
-                                                {% for p in pictures %}
-                                                    {% ifequal p.card card %}
-                                                        <br> <img src="{{ p.file.url }}" style="width:50%;height:50%;" /> <br>
-                                                    {% endifequal %}
-                                                {% endfor %}
-                                            {% else  %}
-                                                <div id="dropzone">
-                                                    <form id="card_form" method="post" action="/names/cardview/" class="dropzone needsclick"
-                                                          enctype="multipart/form-data">
-                                                        {% csrf_token %}
-                                                        <div class="dz-message dz-needsclick">
-                                                            Click here, or drag an image...
-                                                        </div>
-                                                        <input type="hidden" value="{{ card.id }}" name="card">
-                                                    </form>
-                                                </div>
-                                            {% endif %}
+                                        {% if card.id in pictureCards %}
+                                            {% for p in pictures %}
+                                                {% ifequal p.card card %}
+                                                    <br> <img src="{{ p.file.url }}" style="width:50%;height:50%;" /> <br>
+                                                {% endifequal %}
+                                            {% endfor %}
+                                        {% else  %}
+                                            <div id="dropzone">
+                                                <form id="card_form" method="post" action="/names/cardview/" class="dropzone needsclick"
+                                                      enctype="multipart/form-data">
+                                                    {% csrf_token %}
+                                                    <div class="dz-message dz-needsclick">
+                                                        Click here, or drag an image...
+                                                    </div>
+                                                    <input type="hidden" value="{{ card.id }}" name="card">
+                                                </form>
+                                            </div>
                                         {% endif %}
 
                                     </div>
