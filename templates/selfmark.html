@@ -18,7 +18,8 @@
                 <a class="btn btn-primary btn-block" href="{% url "complete" %}?score={{ score }}" role="button">Finish!</a>
             {% else %}
                 {% if cards %}
-                    Who is this student?: <br><img id="picture" class="img-thumbnail" src="/media/card_images/{{ cards.0 }}.jpg"style="width:25%;height:25%;" /><br>
+                    {{ pictures }}
+                    Who is this student?: <br><img id="picture" class="img-thumbnail" src="/media/{{ pictures.2 }}"style="width:25%;height:25%;" /><br>
                     <label hidden id="name">{{ cards.1 }}</label>
                     <button type="button" onclick='myFunction()' class="btn btn btn-primary" id="button">Click to reveal name</button> <br>
                     <button type="button" onclick='answeredq(value)' class="btn btn-sm btn-success" value="correct" id="correct"><span class="glyphicon glyphicon-thumbs-up"></span></button>

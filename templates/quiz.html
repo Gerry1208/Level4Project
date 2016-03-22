@@ -18,7 +18,6 @@
             {% else %}
                 <div id="page">
             {% endif %}
-
             <div id="question" data-value="{{ cards.0 }}">
                 Who is this student?: <br><img class="img-thumbnail" src="/media/{{ pictures.2 }}" style="width:100px;height:100px;" /><br>
                 <br>
@@ -45,7 +44,6 @@
             }
             else{
                 document.getElementById(value).className="btn btn btn-danger btn-block"
-                {# $(wrong_ number).show() #}
 
 
             }
@@ -55,7 +53,7 @@
                 data:{score:score},
                 datatype: 'json',
                 success:function(data){
-                    $("#page").load(' #question')
+                    $("#entire").html(data)
                 }
             })
 

@@ -130,15 +130,20 @@ def quiz(request):
     quiz_type=request.GET.get('quiz')
     cards = card.objects.values_list(flat=True).filter(group=group_name).order_by('?')
     pictures = cardPicture.objects.values_list(flat=True).order_by('?')
+    message=""
 
     cards = list(cards)
     pictures = list(pictures)
+
+    if len(cards) < 4:
+        message = "Unfortunately you do not have enough cards in that group to do a multiple choice quiz"
+
 
     request.session['cards'] = cards
     request.session['pictures'] = pictures
     request.session['count'] = count
 
-    return render_to_response('readyquiz.html', {'cards':cards, 'pictures':pictures, 'count': count, 'quiz_type':quiz_type}, context_instance=RequestContext(request))
+    return render_to_response('readyquiz.html', {'cards':cards, 'pictures':pictures, 'count': count, 'quiz_type':quiz_type, 'msg':message}, context_instance=RequestContext(request))
 
 @login_required
 def nextQuestion(request):
@@ -154,12 +159,9 @@ def nextQuestion(request):
     if len(cards) < 10:
         if count==(len(cards)-1):
             count = 10
-        if len(cards) < 4:
-            return render(request, 'index.html')
 
     if count == 10:
-        score = (score/count) * 100
-        return render_to_response('quiz.html', {'score':score, 'count':count}, context_instance=RequestContext(request))
+        return render_to_response('selfmark.html', {'cards':cards, 'pictures':pictures, 'score':score, 'count':count}, context_instance=RequestContext(request))
 
 
     count += 1
@@ -171,8 +173,6 @@ def nextQuestion(request):
         if p[1] == card[0]:
             pictures = p
 
-    if len(pictures) > 1:
-        pictures = pictures[0]
 
     # Gets three random names to go along with it
     # Adds in the correct answer, and shuffles
@@ -184,7 +184,7 @@ def nextQuestion(request):
             rndNames.append(choice)
 
     random.shuffle(rndNames)
-    return render_to_response('quiz.html', {'cards':card, 'pictures':pictures, 'names':rndNames, 'score':score, 'count':count}, context_instance=RequestContext(request))
+    return render_to_response('quiz.html', {'cards':card, 'pictures':pictures, 'names':rndNames, 'score':score, 'count':count, 'len':(len(cards)-1)}, context_instance=RequestContext(request))
 
 
 
@@ -214,8 +214,6 @@ def SelfMarkQuiz(request):
         if p[1] == cards[0]:
             pictures = p
 
-    if len(pictures) > 1:
-        pictures = []
 
 
     return render_to_response('selfmark.html', {'cards':cards, 'pictures':pictures, 'score':score, 'count':count}, context_instance=RequestContext(request))
@@ -240,19 +238,20 @@ def groupview(request):
     group_form = groupsForm()
     return render_to_response('groups.html', {'groups':groups, 'group_form':group_form}, context_instance=RequestContext(request))
 
-
-class addPicture(FormView):
-    template_name='addpicture.html'
-    form_class = pictureForm
-    success_url = '/names/addpicture/'
-
-    def form_valid(self, form):
-        for each in form.cleaned_data['files']:
-            studArray= each.name.split(".")
-            #studName=studArray[0]
-            #studCard = card.objects.filter(student=studName).first()
-            cardPicture.objects.create(file=each, student=studCard)
-        return super(addPicture,self).form_valid(form)
+# This class is for adding pictures with student numbers as their filename, and linking it to the relevant card
+# Not needed for this version of the app, but could still be useful
+# class addPicture(FormView):
+#     template_name='addpicture.html'
+#     form_class = pictureForm
+#     success_url = '/names/addpicture/'
+#
+#     def form_valid(self, form):
+#         for each in form.cleaned_data['files']:
+#             studArray= each.name.split(".")
+#             studName=studArray[0]
+#             studCard = card.objects.filter(student=studName).first()
+#             cardPicture.objects.create(file=each, student=studCard)
+#         return super(addPicture,self).form_valid(form)
 
 @csrf_protect
 @login_required
